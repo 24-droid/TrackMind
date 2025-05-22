@@ -25,20 +25,20 @@ const Company = [
 
 const Companies = () => {
   return (
-    <div className="bg-[#fbfaff] py-12 px-6 flex flex-col items-center justify-center">
-      <p className='w-90 md:w-150 text-center text-[20px] px-auto'>
+    <div className="bg-[#fbfaff] py-12 px-6 flex flex-col items-center justify-center border-t border-b border-gray-300">
+      <p className='w-90 md:w-150 text-center text-[20px]'>
         Join <span className='font-bold'>1000+ </span>job seekers who’ve used Huntr to manage their job search and land jobs at <span className='font-bold'>1000s </span>of companies
       </p>
 
-      
-      <div className='flex mt-10 gap-10 overflow-x-auto whitespace-nowrap scrollbar-hide w-full px-4'>
-        {Company.map((comp, index) => (
-          <div key={index} className='w-28 flex-shrink-0'>
-            <img src={comp.url} alt={comp.title} className='mx-auto' />
-          </div>
-        ))}
+    <div className='flex mt-10 gap-10 overflow-x-auto whitespace-nowrap scrollbar-hide w-full px-4'>
+      {Company.map((comp, index) => (
+        <div key={index} className='w-28 flex-shrink-0'>
+        <img src={comp.url} alt={comp.title} className='mx-auto' />
       </div>
+    ))}
     </div>
+  </div>
+
   )
 }
 
