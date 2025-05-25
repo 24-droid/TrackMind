@@ -5,6 +5,7 @@ import Hero1 from './components/Hero1'
 import Features from './components/Features'
 import Companies from './components/Companies'
 import Reviews from './components/Reviews'
+import Jobs from './components/Jobs'
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
     <Features />
     <Companies />
     <Reviews />
+    <Jobs />
     </>
   )
 }
