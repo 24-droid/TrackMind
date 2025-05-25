@@ -7,6 +7,7 @@ import Companies from './components/Companies'
 import Reviews from './components/Reviews'
 import Jobs from './components/Jobs'
 import Resume from './components/Resume'
+import Footer from './components/Footer'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
     <Reviews />
     <Jobs />
     <Resume />
+    <Footer />
     </>
   )
 }
