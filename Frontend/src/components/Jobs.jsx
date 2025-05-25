@@ -1,10 +1,12 @@
 import React from 'react';
 import jobs from "../assets/jobs.png";
+import useScrollAnimation from '../animation/useScrollAnimation'
 
 const Jobs = () => {
+  const [ref, isVisible] = useScrollAnimation();
   return (
-    <div className='bg-gradient-to-br from-[#fbfaff] to-[#f4f0ff] py-20 px-6 md:px-20 flex flex-col md:flex-row items-center justify-center gap-16'>
-      
+    <div ref={ref} className={`slide-up ${isVisible ? 'slide-up-active' : ''} bg-gradient-to-br from-[#fbfaff] to-[#f4f0ff] py-20 px-6 md:px-20 flex flex-col md:flex-row items-center justify-center gap-16`}>
+
       
       <div className='w-full max-w-[500px] aspect-[700/570]'>
         <img

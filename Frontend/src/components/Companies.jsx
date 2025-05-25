@@ -9,6 +9,9 @@ import salesforce from '../assets/salesforce.png'
 import spotify from '../assets/spotify.png'
 import twitter from '../assets/twitter.png'
 import uber from '../assets/uber.png'
+import useScrollAnimation from '../animation/useScrollAnimation'
+import { section } from 'framer-motion/client'
+
 
 const Company = [
   { title: 'Chase', url: chase },
@@ -24,8 +27,9 @@ const Company = [
 ]
 
 const Companies = () => {
+  const [ref, isVisible] = useScrollAnimation();
   return (
-    <div className="bg-[#fbfaff] py-12 px-6 flex flex-col items-center justify-center border-t border-b border-gray-300">
+    <div ref={ref} className={`slide-up ${isVisible ? 'slide-up-active' : ''} bg-[#fbfaff] py-12 px-6 flex flex-col items-center justify-center border-t border-b border-gray-300`}>
       <p className='w-90 md:w-150 text-center text-[20px]'>
         Join <span className='font-bold'>1000+ </span>job seekers who’ve used Huntr to manage their job search and land jobs at <span className='font-bold'>1000s </span>of companies
       </p>
@@ -38,7 +42,6 @@ const Companies = () => {
     ))}
     </div>
   </div>
-
   )
 }
 

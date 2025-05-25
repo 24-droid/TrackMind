@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import useScrollAnimation from '../animation/useScrollAnimation'
 
 const reviews = [
   {
@@ -19,6 +20,7 @@ const reviews = [
 ];
 
 const Reviews = () => {
+  const [ref, isVisible] = useScrollAnimation();
   const [currentReviewIndex, setCurrentIndex] = useState(0);
   const currentReview = reviews[currentReviewIndex];
 
@@ -32,7 +34,7 @@ const Reviews = () => {
 
   return (
     <div className="flex flex-col items-center justify-center bg-[#fbfaff] px-6 py-10">
-      <div className="max-w-3xl text-center font-medium text-2xl text-[#190455] mb-8">
+      <div ref={ref} className={`slide-up ${isVisible ?'slide-up-active':''} max-w-3xl text-center font-medium text-2xl text-[#190455] mb-8`}>
         {currentReview.text}
       </div>
 
