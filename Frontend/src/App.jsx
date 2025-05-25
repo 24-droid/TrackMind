@@ -6,6 +6,7 @@ import Features from './components/Features'
 import Companies from './components/Companies'
 import Reviews from './components/Reviews'
 import Jobs from './components/Jobs'
+import Resume from './components/Resume'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
     <Companies />
     <Reviews />
     <Jobs />
+    <Resume />
     </>
   )
 }
