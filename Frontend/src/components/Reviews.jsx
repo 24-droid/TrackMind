@@ -39,7 +39,7 @@ const Reviews = () => {
       </div>
 
       <div className="flex items-center gap-6">
-        <button onClick={handlePrevious} className="text-3xl font-bold text-[#190455] hover:text-purple-700 transition">
+        <button onClick={handlePrevious} className="text-3xl font-bold text-[#190455] hover:text-purple-700 transition hover:cursor-pointer">
           ←
         </button>
 
@@ -48,7 +48,7 @@ const Reviews = () => {
           <div className="text-sm text-gray-600">{currentReview.position}</div>
         </div>
 
-        <button onClick={handleNext} className="text-3xl font-bold text-[#190455] hover:text-purple-700 transition">
+        <button onClick={handleNext} className="text-3xl font-bold text-[#190455] hover:text-purple-700 transition hover:cursor-pointer">
           →
         </button>
       </div>

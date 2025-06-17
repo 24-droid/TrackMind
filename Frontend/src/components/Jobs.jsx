@@ -27,7 +27,7 @@ const Jobs = () => {
         <p className='text-[#190445B3] text-[18px] md:text-[20px] mb-6'>
           No more messy spreadsheets. TrackMind helps you manage all your job applications in one place – notes, dates, tasks, job descriptions, salaries, locations, and company info.
         </p>
-        <button className='bg-[#6A4FEB] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#5940d5] transition duration-300 shadow-md'>
+        <button className='bg-[#6A4FEB] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#5940d5] transition duration-300 shadow-md hover:cursor-pointer'>
           Explore Job Tracker
         </button>
       </div>

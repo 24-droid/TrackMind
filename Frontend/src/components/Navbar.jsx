@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Logo from "../assets/Logo.png";
-
+import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSidebar, setSidebar] = useState(false);
+  const navigate=useNavigate();
 
   return (
     <nav className="bg-[#fbfaff] shadow-md sticky top-0 z-50">
@@ -14,13 +15,13 @@ const Navbar = () => {
           <img src={Logo} alt="Logo" className="w-32 md:w-40" />
           
           
-          <ul className="hidden md:flex items-center gap-10 font-medium text-[#190445CC]">
+          <ul className="hidden md:flex items-center gap-10 font-medium text-[#190445CC] hover:cursor-pointer">
             <li className="hover:text-[#6A4FEB] transition">Job Tracker</li>
             <li className="hover:text-[#6A4FEB] transition">AI Resume Analyser</li>
             <li className="relative">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-1 hover:text-[#6A4FEB] transition"
+                className="flex items-center gap-1 hover:text-[#6A4FEB] transition hover:cursor-pointer"
               >
                 All Features
                 <svg
@@ -47,8 +48,8 @@ const Navbar = () => {
 
         
         <div className="hidden md:flex items-center gap-4">
-          <button className="text-[#190445CC] hover:text-[#6A4FEB] transition font-medium">Login</button>
-          <button className="bg-[#6A4FEB] text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-[#5a40d8] transition">
+          <button className="text-[#190445CC] hover:text-[#6A4FEB] transition font-medium hover:cursor-pointer" onClick={()=>{navigate("/login")}}>Login</button>
+          <button className="bg-[#6A4FEB] text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-[#5a40d8] transition hover:cursor-pointer "onClick={()=>{navigate("/signup")}}>
             Sign Up
           </button>
         </div>

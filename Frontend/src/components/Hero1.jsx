@@ -26,7 +26,7 @@ const Hero1 = () => {
           TrackMind helps you optimise your resumes and cover letters fast with AI, fill out application forms in one click, and automatically organize your job search.
         </p>
         <div className="mt-4">
-          <button className="bg-[#6A4FEB] font-bold text-white text-sm md:text-base px-7 py-3 rounded-md hover:bg-[#5a40d8] transition-all duration-300 shadow-md">
+          <button className="bg-[#6A4FEB] font-bold text-white text-sm md:text-base px-7 py-3 rounded-md hover:bg-[#5a40d8] transition-all duration-300 shadow-md hover:cursor-pointer">
             Sign Up For Free
           </button>
         </div>

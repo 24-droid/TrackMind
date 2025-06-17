@@ -32,7 +32,7 @@ const Resume = () => {
           right skills, qualifications, and experiences with highlighted
           keywords and one-click AI suggestions.
         </p>
-        <button className="bg-[#C5FFF2] text-[#190445] font-semibold px-6 py-3 rounded-md hover:cursor-pointer transition duration-300 shadow-md">
+        <button className="bg-[#C5FFF2] text-[#190445] font-semibold px-6 py-3 rounded-md hover:cursor-pointer transition duration-300 shadow-md ">
           Explore Resume Analyser
         </button>
       </div>
