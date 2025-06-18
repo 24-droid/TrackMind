@@ -20,11 +20,20 @@ export default function Login() {
     return Object.keys(err).length === 0
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault()
     if (!validate()) return
-    // fake login
-    navigate("/dashboard")
+   try {
+    const res=await axios.post("/auth/login",{
+      email:formData.email,
+      password:formData.password
+    });
+    console.log("Login successfull",res.data);
+    navigate("/");
+   } catch (error) {
+    console.error(error.response?.data || "Login failed")
+    alert(error.response?.data?.message || "Login failed")
+   }
   }
 
   return (

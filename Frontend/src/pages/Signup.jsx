@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import FormInput from "../components/FormInput"
 import SelectInput from "../components/SelectInput"
+import axios from "../api/axios"
 
 export default function Signup() {
   const navigate = useNavigate()
@@ -32,10 +33,22 @@ export default function Signup() {
     return Object.keys(err).length === 0
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault()
     if (!validate()) return
-    navigate("/")
+    try {
+      const res= await axios.post("/auth/signup",{
+        fullName:formData.fullName,
+        email:formData.email,
+        password:formData.password,
+        userType:formData.userType
+      })
+      console.log("Signup Successfull",res.data);
+      navigate("/login")
+    } catch (error) {
+      console.error(error.response?.data || "Signup failed")
+      alert(error.response?.data?.message || "Signup failed")
+    }
   }
 
   return (
