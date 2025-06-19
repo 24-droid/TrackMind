@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import axios from '../api/axios'; 
+import { toast } from 'react-toastify';
 
 export default function AddApplicationForm({ onApplicationAdded, onCancel }) {
     const [formData, setFormData] = useState({
@@ -25,6 +26,7 @@ export default function AddApplicationForm({ onApplicationAdded, onCancel }) {
         try {
             const res = await axios.post('/applications', formData);
             console.log('Application added:', res.data);
+            toast.success("Application added successfully!");
             setFormData({ 
                 jobTitle: '',
                 company: '',
@@ -38,6 +40,7 @@ export default function AddApplicationForm({ onApplicationAdded, onCancel }) {
         } catch (err) {
             console.error('Error adding application:', err);
             setError(err.response?.data?.message || 'Failed to add application.');
+            toast.error(err.response?.data?.message || 'Failed to add application.');
         } finally {
             setLoading(false);
         }
@@ -120,6 +123,7 @@ export default function AddApplicationForm({ onApplicationAdded, onCancel }) {
                     type="button"
                     onClick={onCancel}
                     className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+                    disabled={loading}
                 >
                     Cancel
                 </button>

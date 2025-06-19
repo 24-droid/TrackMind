@@ -3,10 +3,12 @@ import { Link } from "react-router-dom"
 import FormInput from "../components/FormInput"
 import axios from "../api/axios"
 import { useAuth } from "../context/AuthContext"
+import { toast } from 'react-toastify';
 export default function Login() {
   const {login}=useAuth()
   const [formData, setFormData] = useState({ email: "", password: "" })
   const [errors, setErrors] = useState({})
+  const [loading,setLoading]=useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }))
@@ -24,6 +26,7 @@ export default function Login() {
   const handleSubmit = async(e) => {
     e.preventDefault()
     if (!validate()) return
+    setLoading(true);
    try {
     const res=await axios.post("/auth/login",{
       email:formData.email,
@@ -31,9 +34,13 @@ export default function Login() {
     });
     console.log("Login successfull",res.data);
     await login(res.data.user,res.data.token);
+    toast.success("Login successful! Welcome.");
    } catch (error) {
     console.error(error.response?.data || "Login failed")
-    alert(error.response?.data?.message || "Login failed")
+    toast.error(error.response?.data?.message || "Login failed. Please check your credentials.");
+   }
+   finally{
+    setLoading(false);
    }
   }
 
@@ -60,8 +67,12 @@ export default function Login() {
           error={errors.password}
           placeholder="••••••••"
         />
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Login
+         <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50" // <--- ADD disabled:opacity-50
+          disabled={loading} 
+        >
+          {loading ? 'Logging In...' : 'Login'} 
         </button>
         <p className="mt-4 text-sm text-center">
           Don't have an account? <Link to="/signup" className="text-blue-600 hover:underline">Sign up</Link>

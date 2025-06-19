@@ -1,7 +1,8 @@
-// frontend/src/components/EditApplicationForm.jsx
+
 import React, { useState, useEffect } from 'react';
 import axios from '../api/axios';
-import { useAuth } from '../context/AuthContext'; // For logout on 401
+import { useAuth } from '../context/AuthContext'; 
+import { toast } from 'react-toastify';
 
 export default function EditApplicationForm({ application, onApplicationUpdated, onCancel }) {
     const { logout } = useAuth();
@@ -16,7 +17,7 @@ export default function EditApplicationForm({ application, onApplicationUpdated,
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Populate form data when the `application` prop changes
+    
     useEffect(() => {
         if (application) {
             setFormData({
@@ -39,15 +40,17 @@ export default function EditApplicationForm({ application, onApplicationUpdated,
         setLoading(true);
         setError(null);
         try {
-            // Make a PUT request to update the application
+           
             const res = await axios.put(`/applications/${application._id}`, formData);
             console.log('Application updated:', res.data);
-            onApplicationUpdated(); // Notify parent to refresh list and close form
+            toast.success("Application updated successfully!");
+            onApplicationUpdated(); 
         } catch (err) {
             console.error('Error updating application:', err);
             setError(err.response?.data?.message || 'Failed to update application.');
+            toast.error(err.response?.data?.message || 'Failed to update application.'); 
             if (err.response && err.response.status === 401) {
-                logout(); // Auto-logout if token is expired/invalid
+                logout(); 
             }
         } finally {
             setLoading(false);

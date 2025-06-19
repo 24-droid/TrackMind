@@ -2,6 +2,7 @@ import React,{useState} from 'react';
 import axios from '../api/axios'; 
 import { useAuth } from '../context/AuthContext'; 
 import EditApplicationForm from './EditApplicationForm';
+import { toast } from 'react-toastify';
 
 export default function ApplicationList({ applications, onApplicationUpdated, onApplicationDeleted }) {
     const { logout } = useAuth();
@@ -16,27 +17,28 @@ export default function ApplicationList({ applications, onApplicationUpdated, on
             try {
                 await axios.delete(`/applications/${appId}`);
                 console.log(`Application with ID ${appId} deleted successfully.`);
-                onApplicationDeleted(); // Refresh the list in the parent (Dashboard)
+                toast.success("Application deleted successfully!");
+                onApplicationDeleted(); 
             } catch (err) {
                 console.error("Error deleting application:", err);
-                alert(err.response?.data?.message || "Failed to delete application.");
+                toast.error(err.response?.data?.message || "Failed to delete application.");
                 if (err.response && err.response.status === 401) {
-                    logout(); // Auto-logout if token is expired/invalid
+                    logout(); 
                 }
             }
         }
     };
     const handleEditClick = (app) => {
-        setEditingApplication(app); // Set the application to be edited
+        setEditingApplication(app); 
     };
 
     const handleEditFormClose = () => {
-        setEditingApplication(null); // Close the edit form/modal
+        setEditingApplication(null); 
     };
 
     const handleApplicationEdited = () => {
-        handleEditFormClose(); // Close the form
-        onApplicationUpdated(); // Refresh the list
+        handleEditFormClose(); 
+        onApplicationUpdated(); 
     };
 
     return (
@@ -71,15 +73,15 @@ export default function ApplicationList({ applications, onApplicationUpdated, on
                             <td className="py-3 px-6 text-left">{formatDate(app.deadline)}</td>
                             <td className="py-3 px-6 text-center">
                                 <div className="flex item-center justify-center space-x-2">
-                                    {/* TODO: Implement Edit and Delete functionality */}
+                                   
                                     <button
-                                        onClick={() => handleEditClick(app)} // Call handleEditClick
+                                        onClick={() => handleEditClick(app)} 
                                         className="bg-yellow-500 text-white p-2 rounded text-xs hover:bg-yellow-600"
                                     >
                                         Edit
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(app._id)} // Call handleDelete
+                                        onClick={() => handleDelete(app._id)} 
                                         className="bg-red-500 text-white p-2 rounded text-xs hover:bg-red-600"
                                     >
                                         Delete

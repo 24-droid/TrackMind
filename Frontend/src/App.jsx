@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import PrivateRoutes from './components/PrivateRoutes';
 import { AuthProvider } from './context/AuthContext'; 
 import Home from './pages/Home';
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
           </Route>
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
+        <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
       </AuthProvider>
     </BrowserRouter>
   );

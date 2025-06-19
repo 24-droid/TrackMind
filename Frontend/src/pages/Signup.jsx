@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom"
 import FormInput from "../components/FormInput"
 import SelectInput from "../components/SelectInput"
 import axios from "../api/axios"
+import { toast } from "react-toastify"
 
 export default function Signup() {
   const navigate = useNavigate()
@@ -14,6 +15,7 @@ export default function Signup() {
     userType: ""
   })
   const [errors, setErrors] = useState({})
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }))
@@ -35,7 +37,8 @@ export default function Signup() {
 
   const handleSubmit = async(e) => {
     e.preventDefault()
-    if (!validate()) return
+    if (!validate()) return;
+    setLoading(true);
     try {
       const res= await axios.post("/auth/signup",{
         fullName:formData.fullName,
@@ -44,10 +47,13 @@ export default function Signup() {
         userType:formData.userType
       })
       console.log("Signup Successfull",res.data);
+      toast.success("Signup successful! Please login."); 
       navigate("/login")
     } catch (error) {
       console.error(error.response?.data || "Signup failed")
-      alert(error.response?.data?.message || "Signup failed")
+      toast.error(error.response?.data?.message || "Signup failed. Please try again.");
+    }finally {
+      setLoading(false); 
     }
   }
 
@@ -98,8 +104,12 @@ export default function Signup() {
           onChange={(e) => handleChange({ target: { id: "userType", value: e.target.value } })}
           error={errors.userType}
         />
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Sign Up
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50" // <--- ADD disabled:opacity-50
+          disabled={loading} 
+        >
+          {loading ? 'Signing Up...' : 'Sign Up'} 
         </button>
         <p className="mt-4 text-sm text-center">
           Already have an account? <Link to="/login" className="text-blue-600 hover:underline">Sign in</Link>
