@@ -4,16 +4,20 @@ import mongoose from "mongoose"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import authRoutes from "./routes/authRoutes.js"
+import applicationRoutes from "./routes/applicationRoutes.js"
 
 dotenv.config()
-const app=express();
 const PORT=process.env.PORT;
+const app=express();
 app.use(cors({origin:process.env.CLIENT_URL,credentials:true}))
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth",authRoutes);
+app.use("/api/applications", applicationRoutes);
 mongoose.connect(process.env.MONGODB_URI).then(()=>{
-    console.log(`Server running on http://localhost:${process.env.PORT} `)
+    console.log(`Database connected successfully`);
+}).catch((error)=>{
+    console.error("Mongodb connection error",err);
 })
 app.listen(PORT, () => {
     console.log(`Server is on http://localhost:${PORT}`);

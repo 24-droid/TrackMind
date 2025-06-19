@@ -1,11 +1,10 @@
 import React, { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 import FormInput from "../components/FormInput"
 import axios from "../api/axios"
 import { useAuth } from "../context/AuthContext"
 export default function Login() {
   const {login}=useAuth()
-  const navigate = useNavigate()
   const [formData, setFormData] = useState({ email: "", password: "" })
   const [errors, setErrors] = useState({})
 
@@ -32,7 +31,6 @@ export default function Login() {
     });
     console.log("Login successfull",res.data);
     await login(res.data.user,res.data.token);
-    navigate("/");
    } catch (error) {
     console.error(error.response?.data || "Login failed")
     alert(error.response?.data?.message || "Login failed")
