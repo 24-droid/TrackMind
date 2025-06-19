@@ -1,7 +1,8 @@
 import React, { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import FormInput from "../components/FormInput"
-
+import axios from "../api/axios"
+console.log("VITE_API_BASE_URL from .env:", import.meta.env.VITE_API_BASE_URL);
 export default function Login() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({ email: "", password: "" })
