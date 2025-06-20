@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route element={<PrivateRoutes />}>
-            <Route path="/dashboard" element={<Dashboard />} />   
+            <Route path="/dashboard" element={<Dashboard />} /> 
+            <Route path="/profile" element={<Profile />} />  
           </Route>
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
