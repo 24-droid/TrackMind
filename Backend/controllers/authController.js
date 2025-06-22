@@ -46,7 +46,7 @@ export const signup=async(req,res)=>{
             token,
         })
     } catch (error) {
-        console.error("Signing error",err);
+        console.error("Signing error",error);
         res.status(500).json({message:"Server error"});
     }
 }
@@ -73,7 +73,7 @@ export const login=async (req,res)=>{
             console.log("Login attempt: Found user:", user.email); 
             console.log("Login attempt: Provided password:", password); 
             console.log("Login attempt: Stored hashed password:", user.password);
-        const isMatch= await bcrypt.compare(password,user.password);
+            const isMatch= await bcrypt.compare(password.trim(),user.password);
         if(!isMatch)
             {   
                 console.log("Login attempt: Password mismatch for user:", user.email);
@@ -104,7 +104,7 @@ export const logout=async(req,res)=>{
        }) 
        return res.status(200).json({message:"Logged Out Successfully"});
     } catch (error) {
-        console.error("Logout error",err);
+        console.error("Logout error",error);
         return res.status(500).json({message:"Server error during logout"});
     }
 }

@@ -6,6 +6,7 @@ import cors from "cors"
 import authRoutes from "./routes/authRoutes.js"
 import applicationRoutes from "./routes/applicationRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
+import uploadRoutes from "./routes/uploadRoutes.js"
 
 dotenv.config()
 const PORT=process.env.PORT;
@@ -16,6 +17,7 @@ app.use(cookieParser());
 app.use("/api/auth",authRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/upload', uploadRoutes);
 mongoose.connect(process.env.MONGODB_URI).then(()=>{
     console.log(`Database connected successfully`);
 }).catch((error)=>{

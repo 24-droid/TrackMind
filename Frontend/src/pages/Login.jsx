@@ -30,7 +30,7 @@ export default function Login() {
    try {
     const res=await axios.post("/auth/login",{
       email:formData.email,
-      password:formData.password
+      password:formData.password.trim()
     });
     console.log("Login successfull",res.data);
     await login(res.data.user,res.data.token);

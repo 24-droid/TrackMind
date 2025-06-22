@@ -16,6 +16,8 @@ export default function EditApplicationForm({ application, onApplicationUpdated,
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [existingDocuments, setExistingDocuments] = useState([]);
 
     
     useEffect(() => {
@@ -24,15 +26,22 @@ export default function EditApplicationForm({ application, onApplicationUpdated,
                 jobTitle: application.jobTitle || '',
                 company: application.company || '',
                 status: application.status || 'Applied',
-                deadline: application.deadline ? new Date(application.deadline).toISOString().split('T')[0] : '', // Format for date input
+                deadline: application.deadline ? new Date(application.deadline).toISOString().split('T')[0] : '', 
                 applicationLink: application.applicationLink || '',
                 notes: application.notes || '',
             });
+            setExistingDocuments(application.documents || []);
         }
     }, [application]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
+    };
+    const handleFileChange = (e) => {
+        setSelectedFiles(Array.from(e.target.files));
+    };
+    const handleRemoveExistingDocument = (public_id) => {
+        setExistingDocuments(existingDocuments.filter(doc => doc.public_id !== public_id));
     };
 
     const handleSubmit = async (e) => {
@@ -40,8 +49,26 @@ export default function EditApplicationForm({ application, onApplicationUpdated,
         setLoading(true);
         setError(null);
         try {
-           
-            const res = await axios.put(`/applications/${application._id}`, formData);
+            const form = new FormData();
+            form.append('jobTitle', formData.jobTitle);
+            form.append('company', formData.company);
+            form.append('status', formData.status);
+            form.append('deadline', formData.deadline);
+            form.append('applicationLink', formData.applicationLink);
+            form.append('notes', formData.notes);
+
+            
+            selectedFiles.forEach(file => {
+                form.append('document', file);
+            });
+
+            
+            form.append('documents', JSON.stringify(existingDocuments));
+            const res = await axios.put(`/applications/${application._id}`, form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
             console.log('Application updated:', res.data);
             toast.success("Application updated successfully!");
             onApplicationUpdated(); 
@@ -129,11 +156,55 @@ export default function EditApplicationForm({ application, onApplicationUpdated,
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 ></textarea>
             </div>
+            <div>
+            <label htmlFor="document" className="block text-sm font-medium text-gray-700">
+                Upload Documents (Resume, Cover Letter, etc.)
+            </label>
+            <input
+                type="file"
+                id="document"
+                onChange={handleFileChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                multiple
+            />
+            {selectedFiles.length > 0 && (
+                <div className="mt-2">
+                    <p className="text-sm text-gray-500">Selected Files:</p>
+                    <ul>
+                        {selectedFiles.map((file, index) => (
+                            <li key={index} className="text-sm text-gray-700">{file.name}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+
+        
+        {existingDocuments.length > 0 && (
+            <div className="mt-4">
+                <p className="text-sm font-medium text-gray-700">Existing Documents:</p>
+                <ul>
+                    {existingDocuments.map((doc) => (
+                        <li key={doc.public_id} className="flex items-center justify-between py-2 border-b border-gray-200">
+                            <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{doc.fileName}</a>
+                            <button
+                                type="button"
+                                onClick={() => handleRemoveExistingDocument(doc.public_id)}
+                                className="text-red-500 hover:text-red-700"
+                            >
+                                Remove
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )}
             <div className="flex justify-end space-x-2">
                 <button
                     type="button"
                     onClick={onCancel}
                     className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+                    disabled={loading} 
                 >
                     Cancel
                 </button>
