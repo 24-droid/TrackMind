@@ -33,10 +33,23 @@ const applicationSchema=new mongoose.Schema({
     },
     documents:[
         {
-            name:String,
-            url:String,
-            publicId:String,
-        }
+            url: {
+              type: String,
+              required: true,
+            },
+            public_id: { // Cloudinary public ID 
+              type: String,
+              required: true,
+            },
+            fileName: { // Original file name
+              type: String,
+            },
+            uploadedAt: {
+              type: Date,
+              default: Date.now,
+            },
+            _id: false,
+          },
     ],
 },{timestamps:true});
 const Application=mongoose.model('Application',applicationSchema);

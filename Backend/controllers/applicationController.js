@@ -73,7 +73,7 @@ export const getApplicationById=async(req,res)=>{
             return res.status(400).json({message:"Invalid application ID"});
         }
     try {
-        const application=await Application.findOne({_id:req.params.id,userId:req.user._id});
+        const application=await Application.findById({_id:req.params.id,userId:req.user._id});
         if(!application){
             return res.status(404).json({message:"Application not found"});
         }
@@ -108,7 +108,7 @@ export const updateApplication = async (req, res) => {
         console.log('DEBUG: application.user:', application.user);
     }
   
-    if (application && application.user.toString() === req.user._id.toString()) {
+    if (application && application.userId.toString() === req.user._id.toString()) {
       application.jobTitle = jobTitle !== undefined ? jobTitle : application.jobTitle;
       application.company = company !== undefined ? company : application.company;
       application.status = status !== undefined ? status : application.status;
