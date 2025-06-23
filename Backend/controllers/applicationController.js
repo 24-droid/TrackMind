@@ -59,9 +59,40 @@ export const createApplication=async(req,res)=>{
     }
 }
 export const getApplications=async(req,res)=>{
+  if(!req.user || !req.user._id){
+    res.status(401).json({message:"Not authorized,no user found"});
+  }
     try {
-        const applications=await Application.find({userId:req.user._id}).sort({createdAt:-1});
-        res.status(200).json(applications);
+        const query={userId:req.user._id};
+        if(req.query.status)
+          {
+            query.status=req.query.status;
+          }
+        if(req.query.company)
+          {
+            query.company=req.query.company;
+          }
+        if(req.query.search)
+          {
+            const searchTerm = req.query.search;
+            query.$or = [
+              { jobTitle: { $regex: searchTerm, $options: 'i' } },
+              { company: { $regex: searchTerm, $options: 'i' } }
+          ];
+          }
+          let sort = { createdAt: -1 };
+          if (req.query.sortBy) {
+            const sortByField = req.query.sortBy; 
+            const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
+    
+            
+            sort = {};
+            sort[sortByField] = sortOrder;
+        }
+           const applications = await (Application.find(query)).sort(sort);
+            res.status(200).json(applications);
+    
+        
     } catch (error) {
         console.error("Error fetching applications:",error);
         res.status(500).json({message:"Server error fetching applications"});
