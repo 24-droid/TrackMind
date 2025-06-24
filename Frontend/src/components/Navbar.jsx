@@ -1,106 +1,143 @@
 import React, { useState } from "react";
-import Logo from "../assets/Logo.png";
-import { useNavigate, Link } from "react-router-dom"; 
-import { useAuth } from "../context/AuthContext"; 
+import Logo from "../assets/Logo.png"; 
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import {
+  FaBars,
+  FaTimes,
+  FaChevronDown,
+  FaLaptopCode,
+  FaFileAlt,
+  FaHome,
+  FaChartBar,
+  FaUser,
+  FaSignInAlt,
+  FaUserPlus,
+  FaSignOutAlt,
+} from "react-icons/fa"; 
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSidebar, setSidebar] = useState(false);
+  const [isFeaturesOpen, setIsFeaturesOpen] = useState(false); 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); 
   const navigate = useNavigate();
-  const { user, logout } = useAuth(); 
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    logout(); 
-    navigate('/login'); 
+    logout();
+    navigate("/login");
+  };
+
+  
+  const closeMenus = () => {
+    setIsMobileMenuOpen(false);
+    setIsFeaturesOpen(false);
   };
 
   return (
-    <nav className="bg-[#fbfaff] shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-2 flex items-center justify-between">
-
-        <div className="flex items-center gap-16">
-          <Link to={user ? "/dashboard" : "/"} className="flex items-center"> 
-             <img src={Logo} alt="Logo" className="w-32 md:w-40" />
-          </Link>
-
-
-          
-          <ul className="hidden md:flex items-center gap-10 font-medium text-[#190445CC] hover:cursor-pointer">
-            {user ? (
-              <>
-                <li className="hover:text-[#6A4FEB] transition">
-                  <Link to="/dashboard">Dashboard</Link> 
-                </li>
-                <li className="relative">
-                  <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-1 hover:text-[#6A4FEB] transition hover:cursor-pointer"
-                  >
-                    All Features
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                  {isOpen && (
-                    <div className="absolute top-10 left-0 bg-white border border-gray-200 rounded-md shadow-lg w-48 py-2 z-50">
-                      <Link to="/ai-resume-analyzer" className="px-4 py-2 hover:bg-gray-100 cursor-pointer block">AI Resume Analyser</Link> {/* Placeholder for AI feature */}
-                      <Link to="/dashboard" className="px-4 py-2 hover:bg-gray-100 cursor-pointer block">Application Tracker</Link>
-                    </div>
-                  )}
-                </li>
-                <li className="hover:text-[#6A4FEB] transition">
-                  <Link to="/profile">Profile</Link> 
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="hover:text-[#6A4FEB] transition">
-                  <Link to="/">Home</Link> 
-                </li>
-                <li className="relative">
-                  <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-1 hover:text-[#6A4FEB] transition hover:cursor-pointer"
-                  >
-                    All Features
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                  {isOpen && (
-                    <div className="absolute top-10 left-0 bg-white border border-gray-200 rounded-md shadow-lg w-48 py-2 z-50">
-                      <p className="px-4 py-2 hover:bg-gray-100 cursor-pointer">AI Resume Analyser</p>
-                      <p className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Application Tracker</p>
-                    </div>
-                  )}
-                </li>
-                
-              </>
-            )}
-          </ul>
-        </div>
+    <nav className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-gray-100">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        
+        <Link to={user ? "/dashboard" : "/"} className="flex items-center" onClick={closeMenus}>
+          <img src={Logo} alt="TrackMind Logo" className="w-28 md:w-36 lg:w-40 h-auto" />
+          <span className="sr-only">TrackMind Home</span> 
+        </Link>
 
         
-        <div className="hidden md:flex items-center gap-4">
+        <ul className="hidden md:flex items-center space-x-8 lg:space-x-12 text-base font-medium text-gray-700">
+          {user ? (
+            <>
+              <li>
+                <Link
+                  to="/dashboard"
+                  className="hover:text-blue-600 transition duration-200"
+                >
+                  Dashboard
+                </Link>
+              </li>
+              <li className="relative">
+                <button
+                  onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
+                  className="flex items-center gap-1 hover:text-blue-600 transition duration-200 focus:outline-none"
+                  aria-expanded={isFeaturesOpen}
+                  aria-haspopup="true"
+                >
+                  All Features
+                  <FaChevronDown
+                    className={`w-3 h-3 transition-transform duration-200 ${
+                      isFeaturesOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {isFeaturesOpen && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-white border border-gray-200 rounded-lg shadow-xl w-56 py-2 z-50 transform origin-top animate-fade-in">
+                    <Link
+                      to="/ai-resume-analyzer"
+                      className="flex items-center gap-2 px-4 py-3 text-gray-800 hover:bg-gray-50 transition duration-150"
+                      onClick={() => setIsFeaturesOpen(false)}
+                    >
+                      <FaFileAlt className="text-blue-500" /> AI Resume Analyzer
+                    </Link>
+                    <Link
+                      to="/dashboard"
+                      className="flex items-center gap-2 px-4 py-3 text-gray-800 hover:bg-gray-50 transition duration-150"
+                      onClick={() => setIsFeaturesOpen(false)}
+                    >
+                      <FaLaptopCode className="text-green-500" /> Application Tracker
+                    </Link>
+                  </div>
+                )}
+              </li>
+              <li>
+                <Link
+                  to="/profile"
+                  className="hover:text-blue-600 transition duration-200"
+                >
+                  Profile
+                </Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link to="/" className="hover:text-blue-600 transition duration-200">
+                  Home
+                </Link>
+              </li>
+              <li className="relative">
+                <button
+                  onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
+                  className="flex items-center gap-1 hover:text-blue-600 transition duration-200 focus:outline-none"
+                  aria-expanded={isFeaturesOpen}
+                  aria-haspopup="true"
+                >
+                  Features
+                  <FaChevronDown
+                    className={`w-3 h-3 transition-transform duration-200 ${
+                      isFeaturesOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {isFeaturesOpen && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-white border border-gray-200 rounded-lg shadow-xl w-56 py-2 z-50 transform origin-top animate-fade-in">
+                    
+                    <p className="flex items-center gap-2 px-4 py-3 text-gray-800 hover:bg-gray-50 transition duration-150 cursor-not-allowed opacity-75">
+                      <FaFileAlt className="text-blue-500" /> AI Resume Analyzer
+                    </p>
+                    <p className="flex items-center gap-2 px-4 py-3 text-gray-800 hover:bg-gray-50 transition duration-150 cursor-not-allowed opacity-75">
+                      <FaLaptopCode className="text-green-500" /> Application Tracker
+                    </p>
+                  </div>
+                )}
+              </li>
+            </>
+          )}
+        </ul>
+
+        
+        <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
           {user ? (
             <button
-              className="bg-red-500 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-red-600 transition hover:cursor-pointer"
+              className="px-6 py-2 bg-red-500 text-white rounded-full text-sm font-semibold hover:bg-red-600 transition duration-200 shadow-md hover:shadow-lg hover:cursor-pointer"
               onClick={handleLogout}
             >
               Logout
@@ -108,14 +145,18 @@ const Navbar = () => {
           ) : (
             <>
               <button
-                className="text-[#190445CC] hover:text-[#6A4FEB] transition font-medium hover:cursor-pointer"
-                onClick={() => { navigate("/login") }}
+                className="text-gray-700 hover:text-blue-600 transition duration-200 font-medium"
+                onClick={() => {
+                  navigate("/login");
+                }}
               >
                 Login
               </button>
               <button
-                className="bg-[#6A4FEB] text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-[#5a40d8] transition hover:cursor-pointer"
-                onClick={() => { navigate("/signup") }}
+                className="px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-semibold hover:bg-blue-700 transition duration-200 shadow-md hover:shadow-lg"
+                onClick={() => {
+                  navigate("/signup");
+                }}
               >
                 Sign Up
               </button>
@@ -125,60 +166,143 @@ const Navbar = () => {
 
         
         <div className="md:hidden">
-          <button onClick={() => setSidebar(!isSidebar)}>
-            <svg
-              className="w-6 h-6 text-gray-800"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="focus:outline-none">
+            {isMobileMenuOpen ? (
+              <FaTimes className="w-7 h-7 text-gray-700" />
+            ) : (
+              <FaBars className="w-7 h-7 text-gray-700" />
+            )}
+            <span className="sr-only">Toggle mobile menu</span>
           </button>
         </div>
       </div>
 
       
-      {isSidebar && (
-        <div className="md:hidden absolute top-16 right-4 w-60 bg-white rounded-md shadow-lg border border-gray-200 z-50 py-4 px-6">
-          <ul className="flex flex-col gap-4 text-[#190445CC] font-medium">
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-lg py-4 px-4 z-40 animate-slide-down">
+          <ul className="flex flex-col gap-4 text-gray-800 font-medium">
             {user ? (
               <>
-                <li className="hover:text-[#6A4FEB] transition">
-                  <Link to="/dashboard" onClick={() => setSidebar(false)}>Dashboard</Link>
+                <li>
+                  <Link
+                    to="/dashboard"
+                    onClick={closeMenus}
+                    className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
+                  >
+                    <FaChartBar className="text-blue-500" /> Dashboard
+                  </Link>
                 </li>
-                <li className="hover:text-[#6A4FEB] transition">
-                  <Link to="/profile" onClick={() => setSidebar(false)}>Profile</Link>
+                <li>
+                  <Link
+                    to="/profile"
+                    onClick={closeMenus}
+                    className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
+                  >
+                    <FaUser className="text-purple-500" /> Profile
+                  </Link>
                 </li>
                 
-                <li className="border-t pt-4">
+                <li>
                   <button
-                    className="w-full bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold hover:bg-red-600 transition"
-                    onClick={() => { handleLogout(); setSidebar(false); }}
+                    onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
+                    className="w-full text-left flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
                   >
-                    Logout
+                    <FaChevronDown
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isFeaturesOpen ? "rotate-180" : ""
+                      }`}
+                    />{" "}
+                    Features
+                  </button>
+                  {isFeaturesOpen && (
+                    <div className="ml-6 mt-2 flex flex-col gap-2 border-l border-gray-200 pl-4 animate-fade-in">
+                      <Link
+                        to="/ai-resume-analyzer"
+                        onClick={closeMenus}
+                        className="flex items-center gap-2 py-2 text-gray-700 hover:text-blue-600 transition duration-150"
+                      >
+                        <FaFileAlt className="text-blue-500" /> AI Resume Analyzer
+                      </Link>
+                      <Link
+                        to="/dashboard"
+                        onClick={closeMenus}
+                        className="flex items-center gap-2 py-2 text-gray-700 hover:text-green-600 transition duration-150"
+                      >
+                        <FaLaptopCode className="text-green-500" /> Application Tracker
+                      </Link>
+                    </div>
+                  )}
+                </li>
+
+                <li className="border-t border-gray-100 pt-4 mt-4">
+                  <button
+                    className="w-full flex items-center justify-center gap-2 bg-red-500 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-red-600 transition duration-200 shadow-md"
+                    onClick={() => {
+                      handleLogout();
+                      closeMenus();
+                    }}
+                  >
+                    <FaSignOutAlt /> Logout
                   </button>
                 </li>
               </>
             ) : (
               <>
-                <li className="hover:text-[#6A4FEB] transition">
-                  <Link to="/" onClick={() => setSidebar(false)}>Home</Link>
+                <li>
+                  <Link
+                    to="/"
+                    onClick={closeMenus}
+                    className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
+                  >
+                    <FaHome className="text-blue-500" /> Home
+                  </Link>
                 </li>
-                <li className="hover:text-[#6A4FEB] transition">Job Tracker</li> 
-                <li className="hover:text-[#6A4FEB] transition">Resume Analyser</li>
-                <li className="hover:text-[#6A4FEB] transition">Application Tracker</li>
-                <div className="border-t pt-4">
-                  <li className="hover:text-[#6A4FEB] transition">
-                    <Link to="/login" onClick={() => setSidebar(false)}>Login</Link>
+                
+                <li>
+                  <button
+                    onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
+                    className="w-full text-left flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
+                  >
+                    <FaChevronDown
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isFeaturesOpen ? "rotate-180" : ""
+                      }`}
+                    />{" "}
+                    Features
+                  </button>
+                  {isFeaturesOpen && (
+                    <div className="ml-6 mt-2 flex flex-col gap-2 border-l border-gray-200 pl-4 animate-fade-in">
+                      <p className="flex items-center gap-2 py-2 text-gray-700 opacity-75 cursor-not-allowed">
+                        <FaFileAlt className="text-blue-500" /> AI Resume Analyzer
+                      </p>
+                      <p className="flex items-center gap-2 py-2 text-gray-700 opacity-75 cursor-not-allowed">
+                        <FaLaptopCode className="text-green-500" /> Application Tracker
+                      </p>
+                    </div>
+                  )}
+                </li>
+
+                <div className="border-t border-gray-100 pt-4 mt-4 flex flex-col gap-3">
+                  <li>
+                    <button
+                      className="w-full flex items-center justify-center gap-2 text-gray-700 px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition duration-200"
+                      onClick={() => {
+                        navigate("/login");
+                        closeMenus();
+                      }}
+                    >
+                      <FaSignInAlt /> Login
+                    </button>
                   </li>
                   <li>
                     <button
-                      className="mt-2 w-full bg-[#6A4FEB] text-white px-4 py-2 rounded-full text-sm font-bold hover:bg-[#5a40d8] transition"
-                      onClick={() => { navigate("/signup"); setSidebar(false); }}
+                      className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition duration-200 shadow-md"
+                      onClick={() => {
+                        navigate("/signup");
+                        closeMenus();
+                      }}
                     >
-                      Sign Up
+                      <FaUserPlus /> Sign Up
                     </button>
                   </li>
                 </div>

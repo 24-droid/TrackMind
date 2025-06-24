@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useScrollAnimation from '../animation/useScrollAnimation'
+import useScrollAnimation from '../animation/useScrollAnimation'; // Assuming this provides simple slide-up effect
 
 const reviews = [
   {
@@ -13,7 +13,7 @@ const reviews = [
     position: "Software Engineer @Microsoft"
   },
   {
-    text: "The speed and precision of this AI resume analyser have been a game-changer for my job search. Within seconds, it tailored my resume, showcasing my skills in a way that was true to my background and resonated with employers. Thanks to this, I've landed more interviews than ever before!",
+    text: "The speed and precision of this AI resume analyzer have been a game-changer for my job search. Within seconds, it tailored my resume, showcasing my skills in a way that was true to my background and resonated with employers. Thanks to this, I've landed more interviews than ever before!",
     name: "Alex FredMan",
     position: "Software Developer @Apple"
   }
@@ -33,26 +33,47 @@ const Reviews = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-[#fbfaff] px-6 py-10">
-      <div ref={ref} className={`slide-up ${isVisible ?'slide-up-active':''} max-w-3xl text-center font-medium text-2xl text-[#190455] mb-8`}>
-        {currentReview.text}
-      </div>
-
-      <div className="flex items-center gap-6">
-        <button onClick={handlePrevious} className="text-3xl font-bold text-[#190455] hover:text-purple-700 transition hover:cursor-pointer">
-          ←
-        </button>
-
-        <div className="text-center">
-          <div className="font-semibold text-[#190455]">{currentReview.name}</div>
-          <div className="text-sm text-gray-600">{currentReview.position}</div>
+    <section className="bg-white py-16 sm:py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
+        <h2 className="sr-only">Customer Reviews</h2> {/* Hidden heading for accessibility */}
+        <div ref={ref} className={`mb-8 ${isVisible ? 'slide-up-active' : ''}`}>
+          <blockquote className="text-3xl sm:text-4xl font-semibold text-gray-900 leading-tight italic px-4">
+            "{currentReview.text}"
+          </blockquote>
         </div>
 
-        <button onClick={handleNext} className="text-3xl font-bold text-[#190455] hover:text-purple-700 transition hover:cursor-pointer">
-          →
-        </button>
+        <div className="flex items-center justify-center gap-6 mt-8">
+          <button
+            onClick={handlePrevious}
+            className="p-3 text-gray-500 hover:text-blue-600 transition-colors duration-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Previous review"
+          >
+            <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+
+          <div className="text-center">
+            <div className="font-semibold text-xl text-gray-900 mb-1">
+              {currentReview.name}
+            </div>
+            <div className="text-base text-gray-600">
+              {currentReview.position}
+            </div>
+          </div>
+
+          <button
+            onClick={handleNext}
+            className="p-3 text-gray-500 hover:text-blue-600 transition-colors duration-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Next review"
+          >
+            <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
