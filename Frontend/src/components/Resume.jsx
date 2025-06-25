@@ -15,7 +15,7 @@ const Resume = () => {
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-center gap-12 lg:gap-16">
         
-        <div className="w-full md:w-1/2 flex justify-center order-2 md:order-1"> {/* Reordered for content-image on desktop */}
+        <div className="w-full md:w-1/2 flex justify-center order-2 md:order-1"> 
           <div className="max-w-md w-full rounded-xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-300">
             <img
               src={resume}
@@ -27,7 +27,7 @@ const Resume = () => {
         </div>
 
         
-        <div className="w-full md:w-1/2 text-center md:text-left order-1 md:order-2"> {/* Reordered for content-image on desktop */}
+        <div className="w-full md:w-1/2 text-center md:text-left order-1 md:order-2"> 
           <p className="text-sm sm:text-base text-purple-600 font-semibold uppercase tracking-wide mb-2">
             AI-POWERED RESUME ANALYZER
           </p>

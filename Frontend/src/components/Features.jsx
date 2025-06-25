@@ -41,12 +41,12 @@ const features = [
 
 const Features = () => {
   return (
-    <section className="bg-white py-16 sm:py-24">
+    <section className=" bg-white py-16 sm:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-12 leading-tight">
           Overcoming Job Search Hurdles
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div className="blocks grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {features.map((feature, index) => (
             <div
               key={index}

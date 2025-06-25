@@ -21,7 +21,7 @@ app.use('/api/upload', uploadRoutes);
 mongoose.connect(process.env.MONGODB_URI).then(()=>{
     console.log(`Database connected successfully`);
 }).catch((error)=>{
-    console.error("Mongodb connection error",err);
+    console.error("Mongodb connection error",error);
 })
 app.listen(PORT, () => {
     console.log(`Server is on http://localhost:${PORT}`);

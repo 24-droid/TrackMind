@@ -14,9 +14,14 @@ export const AuthProvider=({children})=>{
             if(storedToken)
                 {
                     try {
-                        axios.defaults.headers.common['Authorization']=`Bearer ${token}`;
+                        const response=await axios.get("/users/profile",{
+                            headers:{
+                                Authorization:`Bearer ${storedToken}`
+                            }
+                        });
                         setToken(storedToken);
-                        setUser({id:'loaded'});
+                        setUser(response.data);
+                        axios.defaults.headers.common['Authorization']=`Bearer ${storedToken}`;
                     } catch (error) {
                         console.error("Token Verfication Failed:",error);
                         localStorage.removeItem('token');
