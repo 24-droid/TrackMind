@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Profile from './pages/Profile';
+import ResumeAnalyzer from './pages/ResumeAnalyser';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route element={<PrivateRoutes />}>
             <Route path="/dashboard" element={<Dashboard />} /> 
             <Route path="/profile" element={<Profile />} />  
+            <Route path="/ai-resume-analyzer" element={<ResumeAnalyzer/>}/>
           </Route>
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
