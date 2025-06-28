@@ -22,6 +22,19 @@ const userSchema=new mongoose.Schema({
         type:String,
         enum:["student","graduate","other"],
         required:true
+    },
+    emailNotificationsEnabled:{
+        type:Boolean,
+        default:true,
+    },
+    reminderDaysBefore:{
+        type:Number,
+        default:3,
+        min:0,
+    },
+    lastReminderSentAt:{
+        type:Date,
+        default:null,
     }
 },{timestamps:true})
 userSchema.methods.matchPassword = async function (enteredPassword) {

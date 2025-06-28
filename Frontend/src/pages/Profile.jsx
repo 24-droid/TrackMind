@@ -18,8 +18,13 @@ export default function Profile(){
   const[passwordErrors,setPasswordErrors]=useState({});
   const[profileLoading,setProfileLoading]=useState(false);
   const[passwordLoading,setPasswordLoading]=useState(false);
+  const[notificationsEnabled,setNotificationsEnabled]=useState(true);
+  const[reminderDays,setReminderDays]=useState(3);
+  const[notificationLoading,setNotificationLoading]=useState(false);
+  const[notificationMessage,setNotificationMessage]=useState('');
+
   useEffect(()=>{
-    const fecthUserProfile=async()=>{
+    const fetchUserProfileAndNotifications=async()=>{
       if(!user) return;
       setProfileLoading(true);
       try {
@@ -28,6 +33,8 @@ export default function Profile(){
           fullName:res.data.fullName,
           email:res.data.email,
         })
+        setNotificationsEnabled(res.data.emailNotificationsEnabled);
+        setReminderDays(res.data.reminderDaysBefore);
       } catch (error) {
         console.error("Error fetching user profile:",error);
         toast.error(error.response?.data?.message || "Failed to load profile data.");
@@ -39,7 +46,7 @@ export default function Profile(){
         setProfileLoading(false);
       }
     }
-    fecthUserProfile();
+    fetchUserProfileAndNotifications();
   },[user,logout]);
   const handleProfileChange=(e)=>{
     setProfileData({...profileData,[e.target.id]:e.target.value});
@@ -57,6 +64,7 @@ export default function Profile(){
     setProfileErrors(err);
     return Object.keys(err).length === 0;
   }
+
   const validatePassword=()=>{
     const err = {};
     if (!passwordData.currentPassword) err.currentPassword = "Current password is required";
@@ -106,6 +114,30 @@ export default function Profile(){
     }
     finally{
       setPasswordLoading(false);
+    }
+  }
+  const handleNotificationSubmit=async(e)=>{
+    e.preventDefault();
+    setNotificationLoading(true);
+    setNotificationMessage('');
+    try {
+      await axios.put('/users/me/notifications',{
+        emailNotificationsEnabled:notificationsEnabled,
+        reminderDaysBefore:reminderDays,
+      });
+      setNotificationMessage('Notification preferences updated successfully!');
+      toast.success("Notification preferences updated successfully!");
+    } catch (error) {
+      console.error("Error updating notifications preferences:",error);
+      setNotificationMessage(`Failed to update preferences:${error.response?.data?.message||'Server error'}`);
+      toast.error(error.response?.data?.message || "Failed to update notification preferences.");
+      if(error.response && error.response.status===401)
+        {
+          logout();
+        }
+    }
+    finally{
+      setNotificationLoading(false);
     }
   }
   if (profileLoading && !profileData.fullName) { 
@@ -187,6 +219,57 @@ export default function Profile(){
               disabled={passwordLoading}
             >
               {passwordLoading ? 'Updating Password...' : 'Update Password'}
+            </button>
+          </div>
+        </form>
+      </div>
+      <div className="bg-white p-8 rounded-lg shadow-xl">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3">Notification Settings</h2>
+        <form onSubmit={handleNotificationSubmit} className="space-y-6">
+          {notificationMessage && (
+            <p className={`text-center ${notificationMessage.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
+              {notificationMessage}
+            </p>
+          )}
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="emailNotificationsEnabled"
+              checked={notificationsEnabled}
+              onChange={(e) => setNotificationsEnabled(e.target.checked)}
+              className="form-checkbox h-5 w-5 text-blue-600 rounded"
+            />
+            <label htmlFor="emailNotificationsEnabled" className="ml-2 text-gray-700 text-lg">
+              Enable Email Reminders
+            </label>
+          </div>
+
+          <div>
+            <label htmlFor="reminderDays" className="block text-gray-700 text-lg font-medium mb-2">
+              Remind me
+            </label>
+            <select
+              id="reminderDays"
+              value={reminderDays}
+              onChange={(e) => setReminderDays(Number(e.target.value))}
+              disabled={!notificationsEnabled || notificationLoading} // Disable if notifications are off or saving
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+            >
+              <option value={1}>1 day before deadline</option>
+              <option value={3}>3 days before deadline</option>
+              <option value={7}>7 days before deadline</option>
+              <option value={14}>14 days before deadline</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-green-700 transition disabled:opacity-50"
+              disabled={notificationLoading}
+            >
+              {notificationLoading ? 'Saving Settings...' : 'Save Notification Settings'}
             </button>
           </div>
         </form>

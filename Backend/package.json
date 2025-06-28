@@ -16,6 +16,8 @@
     "mammoth": "^1.9.1",
     "mongoose": "^8.16.0",
     "multer": "^2.0.1",
+    "node-cron": "^4.1.1",
+    "nodemailer": "^7.0.3",
     "pdf-parse": "^1.1.1"
   }
 }
