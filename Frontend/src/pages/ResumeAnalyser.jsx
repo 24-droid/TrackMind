@@ -63,12 +63,12 @@ const ResumeAnalyzer = () => {
     setAnalysisResult(null);
 
     const formData = new FormData();
-    formData.append('resume', resumeFile);
+    formData.append('document', resumeFile);
     formData.append('jobRole', jobRole);
 
     try {
       
-      const response = await axios.post('resume/analyze', formData, { 
+      const response = await axios.post('resume/ai/analyze-document', formData, { 
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`, 
