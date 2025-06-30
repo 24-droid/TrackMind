@@ -35,7 +35,7 @@ passport.use(
             else{
                 const newUser=new User({
                     googleId:profile.id,
-                    fullName:profile.displayName[0],
+                    fullName:profile.displayName,
                     email:profile.emails && profile.emails.length>0?profile.emails[0].value:null,
                     avatar:profile.photos && profile.photos.length>0?profile.photos[0].value:null,
                     userType: 'student',
