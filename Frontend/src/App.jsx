@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css'; 
 import Signup from './pages/Signup';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard'; 
+import ApplicationsPage from './pages/ApplicationsPage'; 
 import PrivateRoutes from './components/PrivateRoutes';
 import { AuthProvider } from './context/AuthContext'; 
 import Home from './pages/Home';
@@ -10,6 +10,7 @@ import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Profile from './pages/Profile';
 import ResumeAnalyzer from './pages/ResumeAnalyser';
+import GoogleAuthCallback from './components/GoogleAuthCallback';
 
 function App() {
   return (
@@ -19,8 +20,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
           <Route element={<PrivateRoutes />}>
-            <Route path="/dashboard" element={<Dashboard />} /> 
+            <Route path="/applications" element={<ApplicationsPage />} /> 
             <Route path="/profile" element={<Profile />} />  
             <Route path="/ai-resume-analyzer" element={<ResumeAnalyzer/>}/>
           </Route>

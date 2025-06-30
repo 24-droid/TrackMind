@@ -43,6 +43,10 @@ export default function Login() {
     setLoading(false);
    }
   }
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:5000/api/auth/google';
+  };
+
 
   return (
     <div className="max-w-md mx-auto mt-16 p-6 border rounded-md shadow">
@@ -73,6 +77,21 @@ export default function Login() {
           disabled={loading} 
         >
           {loading ? 'Logging In...' : 'Login'} 
+        </button>
+        <div className="my-6 text-center text-gray-500">
+          <span className="relative inline-block">
+            <span className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-gray-300"></span>
+            </span>
+            <span className="relative bg-white px-3 text-sm">OR</span>
+          </span>
+        </div>
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 transition duration-300 text-lg font-medium"
+        >
+          <img src="https://www.google.com/favicon.ico" alt="Google icon" className="w-6 h-6" />
+          Sign in with Google
         </button>
         <p className="mt-4 text-sm text-center">
           Don't have an account? <Link to="/signup" className="text-blue-600 hover:underline">Sign up</Link>

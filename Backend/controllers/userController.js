@@ -10,11 +10,14 @@ const getUserProfile= async(req,res)=>{
                 email:user.email,
                 emailNotificationsEnabled: user.emailNotificationsEnabled,
                 reminderDaysBefore: user.reminderDaysBefore,
+                avatar: user.avatar,
+                userType: user.userType
             });
         }
    else
     {
         res.status(404).json({message:"User not found"});
+        throw new Error("User not found");
     }
 
 }
@@ -85,4 +88,35 @@ const updateUserNotificationPreferences=async(req,res)=>{
         res.status(500).json({message:"Server error while updating preferences."});
     }
 }
-export {getUserProfile,updatedUserProfile,getUserNotificationPreferences,updateUserNotificationPreferences}
+const getMe=async(req,res)=>{
+    if(req.user){
+        const user=await User.findById(req.user._id).select("-password");
+        if(user){
+            res.json({
+                _id:user._id,
+                fullName:user.fullName,
+                email:user.email,
+                emailNotificationsEnabled:user.emailNotificationsEnabled,
+                reminderDaysBefore:user.reminderDaysBefore,
+                avatar:user.avatar,
+                userType:user.userType
+            })
+        }
+        else{
+            res.status(404).json({message:"User not found"});
+        }
+    }
+    else{
+        res.status(401).json({message:"Not authorized, user not found in request "});
+    }
+}
+const logoutUser=async(req,res)=>{
+    res.cookie('jwt','',{
+        httpOnly:true,
+        expires:new Date(0),
+        secure:process.env.NODE_ENV==='production',
+        sameSite:'Lax',
+    })
+    res.status(200).json({ message: 'Logged out successfully' });
+}
+export {getUserProfile,updatedUserProfile,getUserNotificationPreferences,updateUserNotificationPreferences,getMe,logoutUser}

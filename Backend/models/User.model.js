@@ -16,11 +16,22 @@ const userSchema=new mongoose.Schema({
     },
     password:{
         type:String,
-        required:true
+        required: function() { return !this.googleId; },
+        minlength: [6, 'Password must be at least 6 characters long'],
+        select: false,
+    },
+    googleId:{
+        type:String,
+        unique:true,
+        sparse:true,
+    },
+    avatar:{
+        type:String,
     },
     userType:{
         type:String,
         enum:["student","graduate","other"],
+        default: 'student', 
         required:true
     },
     emailNotificationsEnabled:{

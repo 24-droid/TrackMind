@@ -33,7 +33,7 @@ const Jobs = () => {
           <p className="text-base sm:text-lg text-gray-700 mb-8 max-w-xl md:max-w-none">
             No more messy spreadsheets. TrackMind helps you manage all your job applications in one place – notes, dates, tasks, job descriptions, salaries, locations, and company info.
           </p>
-          <button className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-semibold rounded-full shadow-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 transform hover:-translate-y-1 hover:cursor-pointer"onClick={()=>{navigate("dashboard")}}>
+          <button className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-semibold rounded-full shadow-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 transform hover:-translate-y-1 hover:cursor-pointer"onClick={()=>{navigate("applications")}}>
             Explore Job Tracker
           </button>
         </div>

@@ -14,7 +14,7 @@ import {
   FaRedo, 
 } from "react-icons/fa"; 
 
-export default function Dashboard() {
+export default function ApplicationsPage() {
   const { user, logout, token } = useAuth();
   console.log(user);
   const [applications, setApplications] = useState([]);
