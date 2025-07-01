@@ -11,9 +11,10 @@ export const AuthProvider=({children})=>{
     const navigate=useNavigate();
     useEffect(() => {
         const loadUser = async () => {
-            console.log("AuthContext: loadUser started. Current user:", user, "loading:", loading); 
+            console.log("AuthContext: loadUser started. Token in state:", token); 
             setLoading(true); 
             const storedToken = localStorage.getItem('token');
+            console.log("AuthContext: Token from localStorage:", storedToken);
             if (storedToken) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
                 setToken(storedToken); 
@@ -24,7 +25,11 @@ export const AuthProvider=({children})=>{
             try {
                 const response = await axios.get("/users/me"); 
                 console.log("AuthContext: API /users/me successful. Response data:", response.data);
-                setUser(response.data);
+                if (response.status === 200 && response.data) {
+                    setUser(response.data);
+                } else if (response.status === 304) {
+                    console.log("AuthContext: /users/me returned 304 Not Modified. Assuming user data is present/cached.");
+                }
 
             } catch (error) {
                 console.error("User verification failed:", error.response?.data?.message || error.message);
@@ -32,6 +37,8 @@ export const AuthProvider=({children})=>{
                 delete axios.defaults.headers.common['Authorization'];
                 setUser(null);
                 setToken(null);
+                toast.error("Your session expired or is invalid. Please log in again.");
+                navigate('/login');
             } finally {
                 setLoading(false); 
                 console.log("AuthContext: loadUser finished. Setting loading to false."); 

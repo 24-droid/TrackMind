@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa"; 
 
 export default function ApplicationsPage() {
-  const { user, logout, token } = useAuth();
+  const { user, logout, loading:authLoading} = useAuth();
   console.log(user);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,39 +30,56 @@ export default function ApplicationsPage() {
 
   
   const fetchApplications = useCallback(async () => {
+    if(!user){
+      setLoading(false);
+      console.log("No user found,not fetching appplications.");
+      return;
+    }
     setLoading(true);
     setError(null);
+    console.log("Fetching applications...");
     try {
       const queryParams = new URLSearchParams();
       if (search) queryParams.append("search", search);
       if (statusFilter) queryParams.append("status", statusFilter);
       if (sortBy) queryParams.append("sortBy", sortBy);
       if (sortOrder) queryParams.append("sortOrder", sortOrder);
-
       const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         params: Object.fromEntries(queryParams.entries()),
       };
-
       const response = await axios.get("applications", config);
-      setApplications(response.data);
-    } catch (err) {
-      console.error("Failed to fetch applications:", err);
-      setError(err.response?.data?.message || "Failed to fetch applications");
-      toast.error(err.response?.data?.message || "Failed to load applications.");
-    } finally {
+      console.log("Applications fetch response:", response);
+      console.log("Response data:", response.data);
+      if(response.status==304){
+        console.log("Data not modified (304), using cached data or maintaining current state.");
+      }
+      else{
+        setApplications(response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch applications:",error);
+      if(error.response?.status===401 || error.response?.status==403){
+        toast.error("Session expired. Please log in again.");
+        logout();
+        navigate("/login");
+      }
+      else{
+        setError(error.response?.data?.message||"Failed to fetch applications");
+        toast.error(error.response?.data?.message||"Failed to fetch applications");
+      }
+    }
+    finally{
+      console.log("Finished fetching applications. Setting loading to false.");
       setLoading(false);
     }
-  }, [token, search, statusFilter, sortBy, sortOrder]); 
+  }, [user, search, statusFilter, sortBy, sortOrder, logout]); 
 
   
   useEffect(() => {
-    if (token) {
+    if (user && !authLoading) {
       fetchApplications();
     }
-  }, [token, fetchApplications]); 
+  }, [user, authLoading, fetchApplications]); 
 
   
   const handleSearchChange = (e) => setSearch(e.target.value);
@@ -87,14 +104,21 @@ export default function ApplicationsPage() {
   };
   const handleApplicationUpdated = () => fetchApplications();
   const handleApplicationDeleted = () => fetchApplications();
-
+  if (authLoading) {
+    return (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50">
+            <svg className="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <p className="ml-3 text-gray-700">Checking authentication...</p>
+        </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
-            Welcome, {user?.fullName?.split(" ")[0] || "User"}! 👋
+            Welcome, {user?.fullName?.split(" ") || "User"}! 👋
           </h1>
           <button
             onClick={logout}
