@@ -48,7 +48,7 @@ const Navbar = () => {
             <>
               <li>
                 <Link
-                  to="/dashboard"
+                  to="/applications"
                   className="hover:text-blue-600 transition duration-200"
                 >
                   Dashboard
@@ -78,7 +78,7 @@ const Navbar = () => {
                       <FaFileAlt className="text-blue-500" /> AI Resume Analyzer
                     </Link>
                     <Link
-                      to="/dashboard"
+                      to="/applications"
                       className="flex items-center gap-2 px-4 py-3 text-gray-800 hover:bg-gray-50 transition duration-150"
                       onClick={() => setIsFeaturesOpen(false)}
                     >
@@ -185,7 +185,7 @@ const Navbar = () => {
               <>
                 <li>
                   <Link
-                    to="/dashboard"
+                    to="/applications"
                     onClick={closeMenus}
                     className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
                   >
