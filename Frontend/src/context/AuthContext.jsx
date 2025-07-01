@@ -1,7 +1,7 @@
 import React from "react";
 import { createContext,useState,useEffect,useContext } from "react";
 import axios from "../api/axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import {toast} from "react-toastify"
 const AuthContext=createContext(null);
 export const AuthProvider=({children})=>{
@@ -9,6 +9,7 @@ export const AuthProvider=({children})=>{
     const[token,setToken]=useState(localStorage.getItem('token'));
     const [loading,setLoading]=useState(true);
     const navigate=useNavigate();
+    const location = useLocation();
     useEffect(() => {
         const loadUser = async () => {
             console.log("AuthContext: loadUser started. Token in state:", token); 
@@ -37,8 +38,7 @@ export const AuthProvider=({children})=>{
                 delete axios.defaults.headers.common['Authorization'];
                 setUser(null);
                 setToken(null);
-                toast.error("Your session expired or is invalid. Please log in again.");
-                navigate('/login');
+                
             } finally {
                 setLoading(false); 
                 console.log("AuthContext: loadUser finished. Setting loading to false."); 
