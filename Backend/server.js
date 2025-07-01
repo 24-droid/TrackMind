@@ -17,7 +17,10 @@ import { generateToken } from './controllers/authController.js';
 dotenv.config()
 const PORT=process.env.PORT;
 const app=express();
-app.use(cors({origin:process.env.CLIENT_URL,credentials:true}))
+app.use(cors({origin: [
+    process.env.CLIENT_URL, 
+    'http://localhost:5173' 
+],credentials:true}))
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
@@ -56,7 +59,7 @@ app.get('/api/auth/google/callback', (req, res, next) => {
 
             res.cookie('jwt', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production', // Set to `false` for local HTTP if needed
+                secure: process.env.NODE_ENV === 'production', 
                 sameSite: 'Lax',
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
