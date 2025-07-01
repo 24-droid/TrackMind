@@ -24,7 +24,7 @@ export const AuthProvider=({children})=>{
             }
 
             try {
-                const response = await axios.get("/users/me"); 
+                const response = await axios.get("users/me"); 
                 console.log("AuthContext: API /users/me successful. Response data:", response.data);
                 if (response.status === 200 && response.data) {
                     setUser(response.data);
