@@ -49,7 +49,7 @@ export const AuthProvider=({children})=>{
             navigate('/login'); 
         }
     };
-    const value = { user, token, login, logout, loading, setUser };
+    const value = { user, login, logout, loading, setUser };
     return (
         <AuthContext.Provider value ={value}>
             {loading ? (
