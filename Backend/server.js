@@ -66,7 +66,7 @@ app.get('/api/auth/google/callback', (req, res, next) => {
             console.log("Redirecting to applications");
 
             
-            res.redirect(`http://localhost:5173/applications`); 
+            res.redirect(`${process.env.CLIENT_URL}/applications`); 
             
         });
     })(req, res, next);
