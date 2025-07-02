@@ -1,6 +1,6 @@
 import React from "react";
-import resume from "../assets/Resume.png"; 
-import useScrollAnimation from '../animation/useScrollAnimation'; 
+import resume from "../assets/Resume.png";
+import useScrollAnimation from '../animation/useScrollAnimation';
 import { useNavigate } from "react-router-dom";
 
 const Resume = () => {
@@ -14,8 +14,10 @@ const Resume = () => {
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-center gap-12 lg:gap-16">
-        
-        <div className="w-full md:w-1/2 flex justify-center order-2 md:order-1"> 
+
+        {/* Image Section - This should be first for mobile */}
+        {/* Removed order-2 and md:order-1 to make it default first on mobile */}
+        <div className="w-full md:w-1/2 flex justify-center">
           <div className="max-w-md w-full rounded-xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-300">
             <img
               src={resume}
@@ -26,8 +28,10 @@ const Resume = () => {
           </div>
         </div>
 
-        
-        <div className="w-full md:w-1/2 text-center md:text-left order-1 md:order-2"> 
+        {/* Text Section - This should be second for mobile */}
+        {/* Removed order-1 and md:order-2 to make it default second on mobile */}
+        {/* Added md:order-1 here to put text first on medium screens and up, matching the Jobs section's alternating layout */}
+        <div className="w-full md:w-1/2 text-center md:text-left md:order-1">
           <p className="text-sm sm:text-base text-purple-600 font-semibold uppercase tracking-wide mb-2">
             AI-POWERED RESUME ANALYZER
           </p>

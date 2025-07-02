@@ -16,7 +16,12 @@ export const AuthProvider=({children})=>{
             setLoading(true); 
             const storedToken = localStorage.getItem('token');
             console.log("AuthContext: Token from localStorage:", storedToken);
-            if (storedToken) {
+            if (!storedToken) {
+                setLoading(false);
+                console.log("AuthContext: No token found. Skipping user verification and setting loading to false.");
+                return; 
+            }
+            else if (storedToken) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
                 setToken(storedToken); 
             } else {
@@ -51,6 +56,7 @@ export const AuthProvider=({children})=>{
         axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
         setUser(userData);
         setToken(newToken);
+        setLoading(false);
         navigate('/applications'); 
     }
     const logout=async()=>{
@@ -66,6 +72,7 @@ export const AuthProvider=({children})=>{
             delete axios.defaults.headers.common['Authorization'];
             setUser(null);
             setToken(null);
+            setLoading(false);
             navigate('/login'); 
         }
     }

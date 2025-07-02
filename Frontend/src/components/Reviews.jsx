@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useScrollAnimation from '../animation/useScrollAnimation'; // Assuming this provides simple slide-up effect
+import useScrollAnimation from '../animation/useScrollAnimation'; 
 
 const reviews = [
   {
@@ -34,10 +34,17 @@ const Reviews = () => {
 
   return (
     <section className="bg-white py-16 sm:py-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
-        <h2 className="sr-only">Customer Reviews</h2> {/* Hidden heading for accessibility */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-5xl">
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-12">
+          What Our Users Say
+        </h2>
+
         <div ref={ref} className={`mb-8 ${isVisible ? 'slide-up-active' : ''}`}>
-          <blockquote className="text-3xl sm:text-4xl font-semibold text-gray-900 leading-tight italic px-4">
+          <blockquote
+            
+            className="text-2xl sm:text-3xl font-semibold text-gray-900 leading-relaxed italic px-4"
+            key={currentReviewIndex}
+          >
             "{currentReview.text}"
           </blockquote>
         </div>
@@ -48,7 +55,8 @@ const Reviews = () => {
             className="p-3 text-gray-500 hover:text-blue-600 transition-colors duration-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label="Previous review"
           >
-            <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            
+            <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
             </svg>
           </button>
@@ -67,10 +75,25 @@ const Reviews = () => {
             className="p-3 text-gray-500 hover:text-blue-600 transition-colors duration-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label="Next review"
           >
-            <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            
+            <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
             </svg>
           </button>
+        </div>
+
+        
+        <div className="flex justify-center mt-6 gap-2">
+          {reviews.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`block w-3 h-3 rounded-full transition-colors duration-200 ${
+                index === currentReviewIndex ? 'bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Go to review ${index + 1}`}
+            ></button>
+          ))}
         </div>
       </div>
     </section>
