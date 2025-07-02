@@ -6,77 +6,50 @@ import {toast} from "react-toastify"
 const AuthContext=createContext(null);
 export const AuthProvider=({children})=>{
     const [user,setUser]=useState(null);
-    const[token,setToken]=useState(localStorage.getItem('token'));
     const [loading,setLoading]=useState(true);
     const navigate=useNavigate();
     const location = useLocation();
     useEffect(() => {
         const loadUser = async () => {
-            console.log("AuthContext: loadUser started. Token in state:", token); 
             setLoading(true); 
-            const storedToken = localStorage.getItem('token');
-            console.log("AuthContext: Token from localStorage:", storedToken);
-            if (!storedToken) {
-                setLoading(false);
-                console.log("AuthContext: No token found. Skipping user verification and setting loading to false.");
-                return; 
-            }
-            else if (storedToken) {
-                axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-                setToken(storedToken); 
-            } else {
-                delete axios.defaults.headers.common['Authorization'];
-            }
-
             try {
-                const response = await axios.get("users/me"); 
+                const response=await axios.get("users/me");
                 console.log("AuthContext: API /users/me successful. Response data:", response.data);
                 if (response.status === 200 && response.data) {
-                    setUser(response.data);
+                    setUser(response.data); 
                 } else if (response.status === 304) {
                     console.log("AuthContext: /users/me returned 304 Not Modified. Assuming user data is present/cached.");
                 }
-
             } catch (error) {
-                console.error("User verification failed:", error.response?.data?.message || error.message);
-                localStorage.removeItem('token');
-                delete axios.defaults.headers.common['Authorization'];
+                console.error("User verification failed via cookie:", error.response?.data?.message || error.message);
                 setUser(null);
-                setToken(null);
-                
-            } finally {
+            } finally{
                 setLoading(false); 
-                console.log("AuthContext: loadUser finished. Setting loading to false."); 
+                console.log("AuthContext: loadUser finished. Setting loading to false.");
             }
+            
         };
         loadUser();
     }, []);
-    const login=async(userData,newToken)=>{
-        localStorage.setItem('token', newToken);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-        setUser(userData);
-        setToken(newToken);
-        setLoading(false);
-        navigate('/applications'); 
-    }
-    const logout=async()=>{
+    const login = (userData) => { 
+        setUser(userData); 
+        setLoading(false); 
+        navigate('/applications');
+    };
+    const logout = async () => {
         try {
             await axios.post('/users/logout');
             toast.info('Logged out successfully!');
         } catch (error) {
             console.error('Logout API call failed:', error.response?.data?.message || error.message);
             toast.error('Logout failed on server. Please try again.');
-        }
-        finally{
-            localStorage.removeItem('token');
-            delete axios.defaults.headers.common['Authorization'];
-            setUser(null);
-            setToken(null);
-            setLoading(false);
+        } finally {
+            setUser(null); 
+            setLoading(false); 
             navigate('/login'); 
         }
-    }
-    const value = { user, token, login, logout, loading, setUser, setToken };
+    };
+    const value = { user, token, login, logout, loading, setUser };
     return (
         <AuthContext.Provider value ={value}>
             {loading ? (
