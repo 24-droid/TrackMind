@@ -10,8 +10,16 @@ export const AuthProvider=({children})=>{
     const navigate=useNavigate();
     const location = useLocation();
     useEffect(() => {
-        const loadUser = async () => {
-            setLoading(true); 
+        const loadUser = async () => { 
+            const publicPaths=['/','/login','/signup'];
+            const isPublicPath = publicPaths.includes(location.pathname);
+            const isGoogleCallback = location.pathname.startsWith('/api/auth/google/callback');
+            if (isPublicPath && !isGoogleCallback) {
+                console.log("AuthContext: On a public path, no immediate authentication check needed. Rendering content.");
+                setLoading(false); 
+                return; 
+            }
+            setLoading(true);
             try {
                 const response=await axios.get("users/me");
                 console.log("AuthContext: API /users/me successful. Response data:", response.data);
@@ -30,7 +38,7 @@ export const AuthProvider=({children})=>{
             
         };
         loadUser();
-    }, []);
+    }, [location.pathname]);
     const login = (userData) => { 
         setUser(userData); 
         setLoading(false); 
