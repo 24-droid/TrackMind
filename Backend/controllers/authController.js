@@ -7,6 +7,14 @@ export const generateToken=(userId)=>{
         expiresIn:"7d",
     });
 }
+export const setCookie = (res, token) => {
+    res.cookie('jwt', token, { 
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, 
+    });
+};
 //Now we have to write a method to register a user
 // 1. Extract this info fullName, email, password, userType from req.body
 // 2. Validate check if all the fields are entered.
@@ -36,6 +44,7 @@ export const signup=async(req,res)=>{
             userType
         });
         const token=generateToken(user._id);
+        setCookie(res, token);
         res.status(201).json({
             user:{
                 id:user._id,
@@ -43,7 +52,7 @@ export const signup=async(req,res)=>{
                 email:user.email,
                 userType:user.userType,
             },
-            token,
+            
         })
     } catch (error) {
         console.error("Signing error",error);
@@ -80,6 +89,7 @@ export const login=async (req,res)=>{
                 return res.status(401).json({message:"Invalid credentials"});
             }
         const token=generateToken(user._id);
+        setCookie(res, token);
         res.status(200).json({
             user:{
                 id:user._id,
@@ -87,7 +97,6 @@ export const login=async (req,res)=>{
                 email:user.email,
                 userType: user.userType,
             },
-            token,
         })
     } catch (error) {
         console.error("Login error",error);
