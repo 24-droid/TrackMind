@@ -28,7 +28,7 @@ This project is a testament to the #BuildInPublic ethos – solving real-world p
 * **Secure Authentication:** Robust user authentication ensuring your data is safe.
 ---
 
-## Live Demo 🌐 <--- NEW SECTION
+## Live Demo 🌐 
 Experience TrackMind in action right in your browser!
 [**Try TrackMind Now!**](https://trackmind.vercel.app) 
 ---
