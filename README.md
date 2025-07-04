@@ -5,6 +5,7 @@
 ## Table of Contents
 - [Overview](#overview)
 - [Key Features](#key-features)
+- [Live Demo](#live-demo)
 - [The TrackMind Experience](#the-trackmind-experience)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
@@ -25,6 +26,13 @@ This project is a testament to the #BuildInPublic ethos – solving real-world p
 * **Automated Reminders:** Never miss a follow-up, interview, or deadline with smart, customizable notifications.
 * **Application Status Management:** Easily update and visualize the progress of each application (Applied, Interviewing, Offer, Rejected, etc.).
 * **Secure Authentication:** Robust user authentication ensuring your data is safe.
+---
+
+## Live Demo 🌐 <--- NEW SECTION
+Experience TrackMind in action right in your browser!
+[**Try TrackMind Now!**](https://trackmind.vercel.app) 
+---
+
 
 ## The TrackMind Experience 🚶‍♀️
 Imagine your job search transformed. With TrackMind, you simply log in to a clean, organized dashboard. Adding a new application takes moments, instantly updating your personalized timeline. Before you send your resume, you can leverage TrackMind's AI to get tailored suggestions, ensuring your application stands out. Automated reminders keep you on top of every deadline and follow-up, freeing your mind to focus on preparation, not perspiration. TrackMind is about empowering you to navigate the job market with confidence and control.
