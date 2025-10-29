@@ -40,17 +40,17 @@ app.get('/api/auth/google/callback', (req, res, next) => {
     passport.authenticate('google', (err, user, info) => {
         if (err) {
             console.error('Passport Auth Error:', err);
-            return res.redirect('http://localhost:5173/login?error=auth_failed');
+            return res.redirect(`${process.env.CLIENT_URL}/login?error=auth_failed`);
         }
         if (!user) {
             console.log('Passport Auth: No user found or authentication failed.');
-            return res.redirect('http://localhost:5173/login?error=no_user');
+            return res.redirect(`${process.env.CLIENT_URL}/login?error=no_user`);
         }
 
         req.logIn(user, (err) => {
             if (err) {
                 console.error('req.logIn Error:', err);
-                return res.redirect('http://localhost:5173/login?error=login_failed');
+                return res.redirect(`${process.env.CLIENT_URL}/login?error=login_failed`);
             }
 
             console.log('User object after req.logIn:', req.user);
