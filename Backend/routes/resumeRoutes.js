@@ -5,7 +5,7 @@ import {GoogleGenerativeAI} from "@google/generative-ai"
 import upload from "../utils/multerConfig.js"
 const router=express.Router();
 const genAI=new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const model=genAI.getGenerativeModel({model:"gemini-1.5-flash-latest"});
+const model=genAI.getGenerativeModel({model:"gemini-2.5-flash"});
 async function extractTextFromFile(fileBuffer,mimetype){
     let text="";
     if(mimetype=='application/pdf'){
