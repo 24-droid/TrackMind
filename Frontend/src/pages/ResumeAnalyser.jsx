@@ -4,6 +4,7 @@ import { FaUpload, FaFilePdf, FaFileWord, FaCheckCircle, FaExclamationCircle, Fa
 import { toast } from 'react-toastify';
 import axios from '../api/axios'; 
 import { useAuth } from '../context/AuthContext'; 
+import Navbar from '../components/Navbar';
 
 const ResumeAnalyzer = () => {
   const { token } = useAuth(); 
@@ -88,6 +89,8 @@ const ResumeAnalyzer = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -273,6 +276,7 @@ const ResumeAnalyzer = () => {
         </motion.div>
       )}
     </motion.div>
+    </>
   );
 };
 

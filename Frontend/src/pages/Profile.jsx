@@ -3,6 +3,7 @@ import axios from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import FormInput from "../components/FormInput";
+import Navbar from "../components/Navbar";
 export default function Profile(){
   const {user,login,logout}=useAuth();
   const [profileData,setProfileData]=useState({
@@ -144,6 +145,8 @@ export default function Profile(){
     return <div className="flex justify-center items-center h-screen text-lg">Loading profile...</div>;
   }
   return (
+    <>
+    <Navbar/>
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Your Profile</h1>
 
@@ -275,5 +278,6 @@ export default function Profile(){
         </form>
       </div>
     </div>
+    </>
   );
 }

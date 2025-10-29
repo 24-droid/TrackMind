@@ -35,9 +35,9 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-gray-100">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
         
-        <Link to={user ? "/dashboard" : "/"} className="flex items-center" onClick={closeMenus}>
+        <Link to={user ? "/" : "/"} className="flex items-center" onClick={closeMenus}>
           <img src={Logo} alt="TrackMind Logo" className="w-28 md:w-36 lg:w-40 h-auto" />
           <span className="sr-only">TrackMind Home</span> 
         </Link>

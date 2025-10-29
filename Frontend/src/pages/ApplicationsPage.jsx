@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import axios from "../api/axios";
 import ApplicationList from "../components/ApplicationList";
 import AddApplicationForm from "../components/AddApplicationForm";
+import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
 import {
   FaPlus,
@@ -113,6 +114,8 @@ export default function ApplicationsPage() {
     );
   }
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         
@@ -287,5 +290,6 @@ export default function ApplicationsPage() {
         )}
       </div>
     </div>
+    </>
   );
 }
