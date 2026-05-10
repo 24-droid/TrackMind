@@ -59,8 +59,9 @@ app.get('/api/auth/google/callback', (req, res, next) => {
 
             res.cookie('jwt', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production', 
+                secure: true, 
                 sameSite: 'None',
+                path: '/',
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
             console.log("Redirecting to applications");
