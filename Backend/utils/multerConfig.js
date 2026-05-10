@@ -13,13 +13,18 @@ const upload=multer({
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
             'image/jpeg',
             'image/png',
+            'audio/wav',
+            'audio/webm',
+            'audio/mpeg',
+            'audio/mp3',
+            'video/webm' // Browsers often record audio as video/webm
         ];
     if(allowedMimes.includes(file.mimetype))
         {
             cb(null,true);
         }
     else{
-        cb(new Error('Invalid file type. Only PDF, DOC, DOCX, JPEG, PNG are allowed.'), false);
+        cb(new Error(`Invalid file type: ${file.mimetype}. Only PDF, DOC, Images, and Audio are allowed.`), false);
     }
     }
 })

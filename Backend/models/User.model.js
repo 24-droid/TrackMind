@@ -45,6 +45,14 @@ const userSchema=new mongoose.Schema({
     lastReminderSentAt:{
         type:Date,
         default:null,
+    },
+    resumeText: {
+        type: String,
+        default: null,
+    },
+    lastMockInterviewAt: {
+        type: Date,
+        default: null,
     }
 },{timestamps:true})
 userSchema.methods.matchPassword = async function (enteredPassword) {

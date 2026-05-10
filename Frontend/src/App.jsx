@@ -10,6 +10,7 @@ import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Profile from './pages/Profile';
 import ResumeAnalyzer from './pages/ResumeAnalyser';
+import MockInterview from './pages/MockInterview';
 import GoogleAuthCallback from './components/GoogleAuthCallback';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path="/applications" element={<ApplicationsPage />} /> 
             <Route path="/profile" element={<Profile />} />  
             <Route path="/ai-resume-analyzer" element={<ResumeAnalyzer/>}/>
+            <Route path="/mock-interview" element={<MockInterview/>}/>
           </Route>
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>

@@ -8,6 +8,7 @@ import applicationRoutes from "./routes/applicationRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
 import uploadRoutes from "./routes/uploadRoutes.js"
 import resumeRoutes from "./routes/resumeRoutes.js"
+import interviewRoutes from "./routes/interviewRoutes.js"
 import startReminderJob from "./cronJobs/reminderJob.js"
 import passport from "passport"
 import session from "express-session"
@@ -59,8 +60,9 @@ app.get('/api/auth/google/callback', (req, res, next) => {
 
             res.cookie('jwt', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production', 
+                secure: true, 
                 sameSite: 'None',
+                path: '/',
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
             console.log("Redirecting to applications");
@@ -76,6 +78,7 @@ app.use("/api/applications", applicationRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/resume',resumeRoutes);
+app.use('/api/interview', interviewRoutes);
 startReminderJob();
 mongoose.connect(process.env.MONGODB_URI).then(()=>{
     console.log(`Database connected successfully`);
