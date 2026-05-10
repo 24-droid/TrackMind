@@ -1,56 +1,55 @@
 import express from "express"
 import pdf from "pdf-parse"
 import mammoth from "mammoth"
-import {GoogleGenerativeAI} from "@google/generative-ai"
+import { GoogleGenerativeAI } from "@google/generative-ai"
 import upload from "../utils/multerConfig.js"
-const router=express.Router();
-const genAI=new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const model=genAI.getGenerativeModel({model:"gemini-2.5-flash"});
-async function extractTextFromFile(fileBuffer,mimetype){
-    let text="";
-    if(mimetype=='application/pdf'){
+const router = express.Router();
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+async function extractTextFromFile(fileBuffer, mimetype) {
+    let text = "";
+    if (mimetype == 'application/pdf') {
         try {
-            const data=await pdf(fileBuffer);
-            text=data.text;
+            const data = await pdf(fileBuffer);
+            text = data.text;
         } catch (error) {
-            console.error("Error extracting text from pdf:",error);
+            console.error("Error extracting text from pdf:", error);
             throw new Error("Failed to extract text from the PDF. It might be corrupted or unreadable.");
         }
     }
-    else if(mimetype=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+    else if (mimetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
         try {
             const result = await mammoth.extractRawText({ arrayBuffer: fileBuffer.buffer });
             text = result.value;
         } catch (error) {
-            console.error("Error extracting text from DOCX:",error);
+            console.error("Error extracting text from DOCX:", error);
             throw new Error("Failed to extract text from DOCX. Ensure it's a valid .docx file.");
         }
     }
-    else{
+    else {
         throw new Error("Unsupported file type for text extraction.")
     }
     return text;
 }
-router.post('/ai/analyze-document',upload.single('document'),async(req,res)=>{
+router.post('/ai/analyze-document', upload.single('document'), async (req, res) => {
     console.log('Received request to /ai/analyze-document');
     console.log('req.file:', req.file);
     console.log('req.body:', req.body);
-    if(!req.file)
-        {
-            return res.status(400).json({message:"No resume document uploaded."});
-        }
-    if (!req.body.jobRole || req.body.jobRole.trim() === '') {
-    return res.status(400).json({ message: 'Job role is required.' });
-        }
-    const {buffer,mimetype}=req.file;
-    const {jobRole}=req.body;
-    try {
-         const documentText = await extractTextFromFile(buffer, mimetype);
-         if (!documentText || documentText.trim().length < 50) {
-      return res.status(422).json({ message: "Could not extract sufficient text from the resume file. Please ensure it contains readable content." });
+    if (!req.file) {
+        return res.status(400).json({ message: "No resume document uploaded." });
     }
-    
-    const prompt = `
+    if (!req.body.jobRole || req.body.jobRole.trim() === '') {
+        return res.status(400).json({ message: 'Job role is required.' });
+    }
+    const { buffer, mimetype } = req.file;
+    const { jobRole } = req.body;
+    try {
+        const documentText = await extractTextFromFile(buffer, mimetype);
+        if (!documentText || documentText.trim().length < 50) {
+            return res.status(422).json({ message: "Could not extract sufficient text from the resume file. Please ensure it contains readable content." });
+        }
+
+        const prompt = `
     As an expert Applicant Tracking System (ATS) and highly experienced career coach specializing in software development roles, meticulously analyze the provided document against the given job role.
 
     **Your primary goal is to simulate how a sophisticated ATS would score the document, and how a human recruiter would then review it.**
@@ -109,44 +108,44 @@ router.post('/ai/analyze-document',upload.single('document'),async(req,res)=>{
     }
     \`\`\`
     `;
-    const result=await model.generateContent(prompt);
-    const response=result.response;
-    let textContent=response.text();
-    const jsonMatch = textContent.match(/```json\s*([\s\S]*?)\s*```/);
-    if (jsonMatch && jsonMatch[1]) {
-        textContent = jsonMatch[1].trim(); 
-    } else {
-        console.warn('Gemini response did not contain a ```json code block. Attempting direct parse.');
-    }
-    let analysisResult;
-    try {
-        analysisResult = JSON.parse(textContent);
-    } catch (parseError) {
-        console.error('Failed to parse Gemini JSON response:', parseError);
-        console.error('Raw Gemini output:', textContent);
-        return res.status(500).json({ message: 'AI response was malformed or not valid JSON. Please try again.' });
-    }
-    if (
-        typeof analysisResult.atsScore !== 'number' ||
-        !Array.isArray(analysisResult.suggestions) ||
-        !analysisResult.keywords ||
-        !Array.isArray(analysisResult.grammarErrors) ||
-        typeof analysisResult.readabilityAssessment !== 'string'
-    ) {
-        console.error('Gemini response missing expected top-level structure:', analysisResult);
-        return res.status(500).json({ message: 'AI provided an unexpected analysis format. Some required fields are missing.' });
-    }
-    if (
-        !Array.isArray(analysisResult.keywords.missing) ||
-        !Array.isArray(analysisResult.keywords.found)
-    ) {
-        console.error('Gemini response missing expected keywords structure:', analysisResult.keywords);
-        return res.status(500).json({ message: 'AI provided an unexpected keywords format. Missing "missing" or "found" arrays.' });
-    }
-    analysisResult.atsScore = Math.max(0, Math.min(100, analysisResult.atsScore));
-    res.status(200).json(analysisResult);
+        const result = await model.generateContent(prompt);
+        const response = result.response;
+        let textContent = response.text();
+        const jsonMatch = textContent.match(/```json\s*([\s\S]*?)\s*```/);
+        if (jsonMatch && jsonMatch[1]) {
+            textContent = jsonMatch[1].trim();
+        } else {
+            console.warn('Gemini response did not contain a ```json code block. Attempting direct parse.');
+        }
+        let analysisResult;
+        try {
+            analysisResult = JSON.parse(textContent);
+        } catch (parseError) {
+            console.error('Failed to parse Gemini JSON response:', parseError);
+            console.error('Raw Gemini output:', textContent);
+            return res.status(500).json({ message: 'AI response was malformed or not valid JSON. Please try again.' });
+        }
+        if (
+            typeof analysisResult.atsScore !== 'number' ||
+            !Array.isArray(analysisResult.suggestions) ||
+            !analysisResult.keywords ||
+            !Array.isArray(analysisResult.grammarErrors) ||
+            typeof analysisResult.readabilityAssessment !== 'string'
+        ) {
+            console.error('Gemini response missing expected top-level structure:', analysisResult);
+            return res.status(500).json({ message: 'AI provided an unexpected analysis format. Some required fields are missing.' });
+        }
+        if (
+            !Array.isArray(analysisResult.keywords.missing) ||
+            !Array.isArray(analysisResult.keywords.found)
+        ) {
+            console.error('Gemini response missing expected keywords structure:', analysisResult.keywords);
+            return res.status(500).json({ message: 'AI provided an unexpected keywords format. Missing "missing" or "found" arrays.' });
+        }
+        analysisResult.atsScore = Math.max(0, Math.min(100, analysisResult.atsScore));
+        res.status(200).json(analysisResult);
     } catch (error) {
-        console.error("Server error during resume analysis:",error);
+        console.error("Server error during resume analysis:", error);
         res.status(500).json({ message: error.message || 'Internal server error during resume analysis.' });
     }
 

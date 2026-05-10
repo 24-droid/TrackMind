@@ -5,165 +5,147 @@ import ApplicationList from "../components/ApplicationList";
 import AddApplicationForm from "../components/AddApplicationForm";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import {
-  FaPlus,
-  FaSearch,
-  FaFilter,
-  FaSortAlphaDown,
-  FaSortAlphaUp,
-  FaSignOutAlt,
-  FaRedo, 
-} from "react-icons/fa"; 
+  HiPlus,
+  HiSearch,
+  HiFilter,
+  HiSortAscending,
+  HiSortDescending,
+  HiLogout,
+  HiRefresh,
+} from "react-icons/hi"; 
 
 export default function ApplicationsPage() {
-  const { user, logout, loading:authLoading} = useAuth();
-  console.log(user);
+  const { user, logout, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("desc");
 
-  
   const fetchApplications = useCallback(async () => {
-    if(!user){
+    if (!user) {
       setLoading(false);
-      console.log("No user found,not fetching appplications.");
       return;
     }
     setLoading(true);
     setError(null);
-    console.log("Fetching applications...");
     try {
       const queryParams = new URLSearchParams();
       if (search) queryParams.append("search", search);
       if (statusFilter) queryParams.append("status", statusFilter);
       if (sortBy) queryParams.append("sortBy", sortBy);
       if (sortOrder) queryParams.append("sortOrder", sortOrder);
-      const config = {
+      
+      const response = await axios.get("applications", {
         params: Object.fromEntries(queryParams.entries()),
-      };
-      const response = await axios.get("applications", config);
-      console.log("Applications fetch response:", response);
-      console.log("Response data:", response.data);
-      if(response.status==304){
-        console.log("Data not modified (304), using cached data or maintaining current state.");
-      }
-      else{
-        setApplications(response.data);
-      }
+      });
+      
+      setApplications(response.data);
     } catch (error) {
-      console.error("Failed to fetch applications:",error);
-      if(error.response?.status===401 || error.response?.status==403){
+      console.error("Failed to fetch applications:", error);
+      if (error.response?.status === 401 || error.response?.status === 403) {
         toast.error("Session expired. Please log in again.");
         logout();
         navigate("/login");
+      } else {
+        setError(error.response?.data?.message || "Failed to fetch applications");
       }
-      else{
-        setError(error.response?.data?.message||"Failed to fetch applications");
-        toast.error(error.response?.data?.message||"Failed to fetch applications");
-      }
-    }
-    finally{
-      console.log("Finished fetching applications. Setting loading to false.");
+    } finally {
       setLoading(false);
     }
-  }, [user, search, statusFilter, sortBy, sortOrder, logout]); 
+  }, [user, search, statusFilter, sortBy, sortOrder, logout, navigate]); 
 
-  
   useEffect(() => {
     if (user && !authLoading) {
       fetchApplications();
     }
   }, [user, authLoading, fetchApplications]); 
 
-  
   const handleSearchChange = (e) => setSearch(e.target.value);
   const handleStatusFilterChange = (e) => setStatusFilter(e.target.value);
   const handleSortByChange = (e) => setSortBy(e.target.value);
   const handleSortOrderChange = () =>
     setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
 
-  
   const handleClearFilters = () => {
     setSearch("");
     setStatusFilter("");
     setSortBy("createdAt"); 
     setSortOrder("desc"); 
-   
   };
 
-  
   const handleApplicationAdded = () => {
     setShowAddForm(false);
     fetchApplications();
   };
-  const handleApplicationUpdated = () => fetchApplications();
-  const handleApplicationDeleted = () => fetchApplications();
+
   if (authLoading) {
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50">
-            <svg className="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <p className="ml-3 text-gray-700">Checking authentication...</p>
+      <div className="fixed inset-0 flex items-center justify-center bg-slate-50 z-50">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-8 h-8 bg-sky-500/10 rounded-full animate-pulse"></div>
+          </div>
         </div>
+      </div>
     );
   }
+
   return (
-    <>
-    <Navbar/>
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-slate-50 text-slate-800">
+      <Navbar />
+      
+      {/* Background Orbs */}
+      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-sky-500/5 rounded-full blur-[120px] -z-10" />
+      <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] -z-10" />
+
+      <main className="container mx-auto px-4 pt-28 pb-20 max-w-7xl">
         
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
-            Welcome, {user?.fullName?.split(" ") || "User"}! 👋
-          </h1>
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2 tracking-tight">
+              Hello, <span className="gradient-text">{user?.fullName?.split(" ")[0] || "Tracker"}</span>!
+            </h1>
+            <p className="text-slate-600 text-lg">You have {applications.length} active applications under review.</p>
+          </div>
           <button
-            onClick={logout}
-            className="inline-flex items-center gap-2 px-5 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-red-100 hover:text-red-600 transition-colors duration-200 shadow-sm text-sm"
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="btn-primary flex items-center gap-2 group"
           >
-            <FaSignOutAlt className="text-base" /> Logout
+            <HiPlus className={`w-5 h-5 transition-transform duration-300 ${showAddForm ? 'rotate-45' : ''}`} />
+            {showAddForm ? "Close Form" : "Add Application"}
           </button>
         </header>
 
-        
-        <div className="bg-white p-6 rounded-xl shadow-lg mb-8 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
-         
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="w-full lg:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-md text-base transform hover:-translate-y-0.5"
-          >
-            <FaPlus className="text-sm" />{" "}
-            {showAddForm ? "Hide Form" : "Add New Application"}
-          </button>
-
-          
-          <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Toolbar */}
+        <div className="glass p-4 rounded-2xl mb-10 flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
+          <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             
-            <div className="relative">
+            <div className="relative group">
+              <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-sky-400 transition-colors" />
               <input
                 type="text"
-                placeholder="Search title or company..."
+                placeholder="Search company..."
                 value={search}
                 onChange={handleSearchChange}
-                className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                aria-label="Search applications"
+                className="w-full pl-12 pr-4 py-3 bg-white/70 border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500 transition-all text-sm"
               />
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
-            
-            <div className="relative">
+            <div className="relative group">
+              <HiFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-sky-400 transition-colors" />
               <select
                 value={statusFilter}
                 onChange={handleStatusFilterChange}
-                className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-800 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors cursor-pointer"
-                aria-label="Filter by status"
+                className="w-full pl-12 pr-4 py-3 bg-white/70 border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500 appearance-none text-sm cursor-pointer"
               >
                 <option value="">All Statuses</option>
                 <option value="Pending">Pending</option>
@@ -171,125 +153,95 @@ export default function ApplicationsPage() {
                 <option value="Interviewing">Interviewing</option>
                 <option value="Accepted">Accepted</option>
                 <option value="Rejected">Rejected</option>
-                <option value="Withdrawn">Withdrawn</option>
               </select>
-              <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
-            
-            <div className="relative">
+            <div className="relative group">
+              <HiSortAscending className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-sky-400 transition-colors" />
               <select
                 value={sortBy}
                 onChange={handleSortByChange}
-                className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-800 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors cursor-pointer"
-                aria-label="Sort applications by"
+                className="w-full pl-12 pr-4 py-3 bg-white/70 border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500 appearance-none text-sm cursor-pointer"
               >
                 <option value="createdAt">Date Created</option>
                 <option value="jobTitle">Job Title</option>
                 <option value="company">Company</option>
                 <option value="deadline">Deadline</option>
               </select>
-              <FaSortAlphaDown className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
-            
             <div className="flex gap-2">
               <button
                 onClick={handleSortOrderChange}
-                className="flex-grow flex items-center justify-center gap-1 bg-gray-100 text-gray-700 px-3 py-2.5 rounded-lg hover:bg-gray-200 transition-colors duration-200 shadow-sm text-sm font-semibold"
-                aria-label={
-                  sortOrder === "asc" ? "Sort ascending" : "Sort descending"
-                }
+                className="flex-1 flex items-center justify-center gap-2 bg-white/70 border border-slate-200 rounded-xl hover:border-slate-300 transition-all text-sm font-bold"
               >
-                {sortOrder === "asc" ? <FaSortAlphaUp /> : <FaSortAlphaDown />}{" "}
-                {sortOrder === "asc" ? "Asc" : "Desc"}
+                {sortOrder === "asc" ? <HiSortAscending className="w-5 h-5 text-sky-400" /> : <HiSortDescending className="w-5 h-5 text-sky-400" />}
+                {sortOrder.toUpperCase()}
               </button>
               <button
                 onClick={handleClearFilters}
-                className="flex-grow flex items-center justify-center gap-1 bg-gray-100 text-gray-700 px-3 py-2.5 rounded-lg hover:bg-gray-200 transition-colors duration-200 shadow-sm text-sm font-semibold"
-                title="Clear all filters and search"
-                aria-label="Clear all filters and search"
+                className="p-3 bg-white/70 border border-slate-200 rounded-xl hover:bg-slate-100 transition-all group"
+                title="Reset Filters"
               >
-                <FaRedo /> Clear
+                <HiRefresh className="w-5 h-5 text-slate-600 group-hover:rotate-180 transition-transform duration-500" />
               </button>
             </div>
           </div>
         </div>
 
-        
+        {/* Add Form with Animation */}
         {showAddForm && (
-          <div className="mb-8 p-6 bg-white rounded-xl shadow-lg border border-gray-100">
-            <AddApplicationForm
-              onApplicationAdded={handleApplicationAdded}
-              onCancel={() => setShowAddForm(false)}
-            />
+          <div className="mb-12 animate-slide-down">
+            <div className="glass p-8 rounded-3xl border-sky-500/20">
+              <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></div>
+                New Application Details
+              </h3>
+              <AddApplicationForm
+                onApplicationAdded={handleApplicationAdded}
+                onCancel={() => setShowAddForm(false)}
+              />
+            </div>
           </div>
         )}
 
-       
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 border-b pb-2 border-gray-200">
-          Your Applications
-        </h2>
-
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <svg
-              className="animate-spin h-8 w-8 text-blue-500"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            <p className="ml-3 text-gray-600 text-lg">Loading applications...</p>
+        {/* Content Area */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <div className="w-12 h-12 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin"></div>
+            <p className="text-slate-600 font-medium animate-pulse">Synchronizing applications...</p>
           </div>
-        )}
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg shadow-sm text-center">
-            <p className="font-medium">Error: {error}</p>
-            <p className="text-sm mt-1">Please try refreshing the page.</p>
+        ) : error ? (
+          <div className="glass p-8 rounded-3xl border-rose-500/20 text-center">
+            <p className="text-rose-400 font-bold mb-2">Sync Error Detected</p>
+            <p className="text-slate-600 text-sm">{error}</p>
           </div>
-        )}
-
-        {!loading && !error && applications.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-xl shadow-lg border border-gray-100">
-            <h3 className="text-xl font-semibold text-gray-800 mb-3">
-              No applications found!
-            </h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              It looks like you haven't added any job applications yet or your filters are too restrictive.
+        ) : applications.length === 0 ? (
+          <div className="glass p-20 rounded-[3rem] text-center border-dashed border-slate-200">
+            <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6">
+              <HiSearch className="w-10 h-10 text-slate-700" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-3">No matching records found</h3>
+            <p className="text-slate-600 mb-8 max-w-md mx-auto">
+              Ready to start your journey? Add your first job application and we'll help you track it to the finish line.
             </p>
             <button
               onClick={() => setShowAddForm(true)}
-              className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-md text-lg transform hover:-translate-y-0.5"
+              className="btn-primary"
             >
-              <FaPlus /> Add Your First Application
+              Initialize First Entry
             </button>
           </div>
+        ) : (
+          <div className="animate-fade-in">
+            <ApplicationList
+              applications={applications}
+              onApplicationUpdated={fetchApplications}
+              onApplicationDeleted={fetchApplications}
+            />
+          </div>
         )}
-
-        {!loading && !error && applications.length > 0 && (
-          <ApplicationList
-            applications={applications}
-            onApplicationUpdated={handleApplicationUpdated}
-            onApplicationDeleted={handleApplicationDeleted}
-          />
-        )}
-      </div>
+      </main>
     </div>
-    </>
   );
-}
+}
