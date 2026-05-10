@@ -1,11 +1,13 @@
 import express from "express"
 import pdf from "pdf-parse"
 import mammoth from "mammoth"
-import { GoogleGenerativeAI } from "@google/generative-ai"
 import upload from "../utils/multerConfig.js"
+import { protect } from "../middleware/authMiddleware.js"
+import User from "../models/User.model.js"
+import { generateJSONContent } from "../utils/aiService.js"
+
 const router = express.Router();
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
 async function extractTextFromFile(fileBuffer, mimetype) {
     let text = "";
     if (mimetype == 'application/pdf') {
@@ -31,10 +33,9 @@ async function extractTextFromFile(fileBuffer, mimetype) {
     }
     return text;
 }
-router.post('/ai/analyze-document', upload.single('document'), async (req, res) => {
+
+router.post('/ai/analyze-document', protect, upload.single('document'), async (req, res) => {
     console.log('Received request to /ai/analyze-document');
-    console.log('req.file:', req.file);
-    console.log('req.body:', req.body);
     if (!req.file) {
         return res.status(400).json({ message: "No resume document uploaded." });
     }
@@ -48,6 +49,9 @@ router.post('/ai/analyze-document', upload.single('document'), async (req, res) 
         if (!documentText || documentText.trim().length < 50) {
             return res.status(422).json({ message: "Could not extract sufficient text from the resume file. Please ensure it contains readable content." });
         }
+
+        // Save resume text to user profile for mock interview feature
+        await User.findByIdAndUpdate(req.user._id, { resumeText: documentText });
 
         const prompt = `
     As an expert Applicant Tracking System (ATS) and highly experienced career coach specializing in software development roles, meticulously analyze the provided document against the given job role.
@@ -108,23 +112,8 @@ router.post('/ai/analyze-document', upload.single('document'), async (req, res) 
     }
     \`\`\`
     `;
-        const result = await model.generateContent(prompt);
-        const response = result.response;
-        let textContent = response.text();
-        const jsonMatch = textContent.match(/```json\s*([\s\S]*?)\s*```/);
-        if (jsonMatch && jsonMatch[1]) {
-            textContent = jsonMatch[1].trim();
-        } else {
-            console.warn('Gemini response did not contain a ```json code block. Attempting direct parse.');
-        }
-        let analysisResult;
-        try {
-            analysisResult = JSON.parse(textContent);
-        } catch (parseError) {
-            console.error('Failed to parse Gemini JSON response:', parseError);
-            console.error('Raw Gemini output:', textContent);
-            return res.status(500).json({ message: 'AI response was malformed or not valid JSON. Please try again.' });
-        }
+        const analysisResult = await generateJSONContent(prompt, "You are an expert ATS scanner and career coach.");
+        
         if (
             typeof analysisResult.atsScore !== 'number' ||
             !Array.isArray(analysisResult.suggestions) ||
@@ -132,15 +121,8 @@ router.post('/ai/analyze-document', upload.single('document'), async (req, res) 
             !Array.isArray(analysisResult.grammarErrors) ||
             typeof analysisResult.readabilityAssessment !== 'string'
         ) {
-            console.error('Gemini response missing expected top-level structure:', analysisResult);
-            return res.status(500).json({ message: 'AI provided an unexpected analysis format. Some required fields are missing.' });
-        }
-        if (
-            !Array.isArray(analysisResult.keywords.missing) ||
-            !Array.isArray(analysisResult.keywords.found)
-        ) {
-            console.error('Gemini response missing expected keywords structure:', analysisResult.keywords);
-            return res.status(500).json({ message: 'AI provided an unexpected keywords format. Missing "missing" or "found" arrays.' });
+            console.error('AI response missing expected top-level structure:', analysisResult);
+            return res.status(500).json({ message: 'AI provided an unexpected analysis format.' });
         }
         analysisResult.atsScore = Math.max(0, Math.min(100, analysisResult.atsScore));
         res.status(200).json(analysisResult);

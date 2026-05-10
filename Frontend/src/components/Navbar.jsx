@@ -12,7 +12,8 @@ import {
   HiOutlineLogin,
   HiOutlineUserAdd,
   HiOutlineHome,
-  HiOutlineSparkles
+  HiOutlineSparkles,
+  HiOutlineMicrophone
 } from "react-icons/hi";
 
 const Navbar = () => {
@@ -107,12 +108,12 @@ const Navbar = () => {
                         <span>Resume Analyzer</span>
                       </Link>
                       <Link
-                        to="/applications"
+                        to="/mock-interview"
                         className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-sky-50 transition-all font-medium"
                         onClick={() => setIsFeaturesOpen(false)}
                       >
-                        <HiOutlineViewGrid className="w-5 h-5 text-indigo-500" />
-                        <span>Track Apps</span>
+                        <HiOutlineMicrophone className="w-5 h-5 text-amber-500" />
+                        <span>Mock Interview</span>
                       </Link>
                     </div>
                   )}
@@ -167,7 +168,8 @@ const Navbar = () => {
           {user ? (
             <>
               <NavLink to="/applications" icon={HiOutlineViewGrid}>Dashboard</NavLink>
-              <NavLink to="/ai-resume-analyzer" icon={HiOutlineDocumentSearch}>AI Resume Analyzer</NavLink>
+              <NavLink to="/ai-resume-analyzer" icon={HiOutlineDocumentSearch}>Resume Analyzer</NavLink>
+              <NavLink to="/mock-interview" icon={HiOutlineMicrophone}>Mock Interview</NavLink>
               <NavLink to="/profile" icon={HiOutlineUser}>Profile</NavLink>
               <button
                 onClick={handleLogout}
