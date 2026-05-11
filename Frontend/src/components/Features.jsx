@@ -1,5 +1,5 @@
 import React from 'react'; 
-import { HiOutlineDocumentText, HiOutlineClipboardList, HiOutlineLightningBolt, HiOutlineGlobeAlt } from 'react-icons/hi';
+import { HiOutlineDocumentText, HiOutlineClipboardList, HiOutlineLightningBolt, HiOutlineVideoCamera } from 'react-icons/hi';
 
 const features = [
   {
@@ -24,11 +24,11 @@ const features = [
     bg: 'bg-amber-500/5'
   },
   {
-    title: 'Global Opportunities',
-    description: 'Navigate the competitive global tech market with ease. Streamlined workflows built for high-performance job hunters.',
-    icon: <HiOutlineGlobeAlt className="w-8 h-8 text-indigo-400" />,
-    border: 'border-indigo-500/20',
-    bg: 'bg-indigo-500/5'
+    title: 'Live AI Mock Interviews',
+    description: 'Practice with a highly realistic virtual interviewer. Get instant feedback on your communication and technical skills using advanced voice AI.',
+    icon: <HiOutlineVideoCamera className="w-8 h-8 text-rose-500" />,
+    border: 'border-rose-500/20',
+    bg: 'bg-rose-500/5'
   }
 ];
 
