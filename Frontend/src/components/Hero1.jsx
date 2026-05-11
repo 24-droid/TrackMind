@@ -44,7 +44,7 @@ const Hero1 = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              TrackMind automates the tedious parts of applying. From AI resume optimization to intelligent tracking, we give you the edge to land your dream role.
+              TrackMind automates the tedious parts of applying. From AI resume optimization and <span className="font-bold text-sky-500">Live Video Mock Interviews</span> to intelligent tracking, we give you the edge to land your dream role.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-4">
@@ -78,8 +78,13 @@ const Hero1 = () => {
                 <span className="text-2xl font-bold text-slate-900">10k+</span>
                 <span className="text-xs text-slate-600 uppercase tracking-widest">Resumes Analyzed</span>
               </div>
-              <div className="h-10 w-[1px] bg-slate-100" />
+              <div className="h-10 w-[1px] bg-slate-300" />
               <div className="flex flex-col items-center lg:items-start">
+                <span className="text-2xl font-bold text-slate-900">24/7</span>
+                <span className="text-xs text-slate-600 uppercase tracking-widest">AI Interviews</span>
+              </div>
+              <div className="h-10 w-[1px] bg-slate-300 hidden sm:block" />
+              <div className="flex flex-col items-center lg:items-start hidden sm:flex">
                 <span className="text-2xl font-bold text-slate-900">98%</span>
                 <span className="text-xs text-slate-600 uppercase tracking-widest">Success Rate</span>
               </div>

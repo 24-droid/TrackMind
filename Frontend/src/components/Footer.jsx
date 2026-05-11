@@ -1,6 +1,6 @@
 import React from 'react';
-import Logo from '../assets/Logo.png'; 
 import { FaTwitter, FaLinkedinIn, FaGithub, FaDiscord } from 'react-icons/fa'; 
+import { HiOutlineSparkles } from "react-icons/hi";
 
 const Footer = () => {
   return (
@@ -8,7 +8,15 @@ const Footer = () => {
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
         
         <div className="flex flex-col items-center md:items-start space-y-6">
-          <img src={Logo} alt="TrackMind" className="w-40" />
+          <div className="flex items-center gap-3 group cursor-pointer">
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 shadow-lg shadow-sky-500/30 overflow-hidden transform transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
+              <HiOutlineSparkles className="w-6 h-6 text-white absolute z-10" />
+              <div className="absolute inset-0 bg-white/20 blur-md rounded-full group-hover:scale-150 transition-transform duration-500" />
+            </div>
+            <span className="text-2xl font-black tracking-tighter text-slate-900">
+              Track<span className="text-sky-500">Mind</span>
+            </span>
+          </div>
           <p className="text-slate-600 text-sm leading-relaxed max-w-xs text-center md:text-left">
             Revolutionizing the job search with AI-powered tools designed to land you the role you deserve.
           </p>
