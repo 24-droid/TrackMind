@@ -21,11 +21,11 @@ Born from the chaos of my own job search, **TrackMind** is an intuitive, AI-powe
 This project is a testament to the #BuildInPublic ethos – solving real-world problems by building impactful solutions.
 
 ## Key Features 🎯
-* **Centralized Application Tracking:** Manage all job applications in one intuitive dashboard.
+* **AI Video Mock Interviews:** Conduct high-fidelity virtual interviews with a realistic AI interviewer featuring professional Indian-accented voice synthesis and real-time transcription.
 * **AI Resume Optimization:** Get instant, intelligent feedback and suggestions to tailor your resume for specific job descriptions, significantly boosting your chances.
+* **Dual-Engine AI Brain:** Seamless failover logic between Google Gemini and Groq (Llama 3) to ensure 100% uptime and high-performance inference.
 * **Automated Reminders:** Never miss a follow-up, interview, or deadline with smart, customizable notifications.
-* **Application Status Management:** Easily update and visualize the progress of each application (Applied, Interviewing, Offer, Rejected, etc.).
-* **Secure Authentication:** Robust user authentication ensuring your data is safe.
+* **Centralized Tracking:** Manage all job applications in one intuitive dashboard with status visualizations.
 ---
 
 ## Live Demo 🌐 
@@ -51,12 +51,14 @@ TrackMind is built using the MERN stack with additional powerful libraries:
 * **Node.js & Express.js:** Powering the robust server-side logic and API.
 * **MongoDB (with Mongoose):** A flexible NoSQL database for managing application data.
 * **jsonwebtoken (JWT) & bcryptjs:** Ensuring secure user authentication and password hashing.
-* **cookie-parser & CORS:** For handling HTTP-only cookies and enabling cross-origin requests.
+* **Axios & Form-Data:** For handling complex AI API requests and audio stream buffering.
+* **Multer:** Handling secure file and audio uploads.
 
 **AI Integration:**
-* **Intelligent Resume Analysis & Optimization:** Leverages advanced Natural Language Processing (NLP) to parse your resume and job descriptions. It identifies key skills and requirements, providing actionable feedback to tailor your resume, highlight relevant experience, and increase alignment with target roles.
-* **Automated Skill Matching:** Compares your profile's skills against job requirements, helping you quickly assess your fit for new opportunities.
-* **Content Generation Assistance (Future):** Planned features include AI assistance for drafting personalized cover letter snippets or follow-up emails based on application context and company details.
+* **AI Video Mock Interview Room:** Conducts interactive technical interviews using **Sarvam AI (Bulbul:v3)** for realistic Indian voice synthesis and **Saaras:v1** for high-accuracy speech-to-text transcription.
+* **Multi-Model Intelligence:** Leverages **Google Gemini 2.0 Flash** as the primary brain for resume parsing and question generation, with an automated failover to **Groq (Llama 3.3 70B)** to ensure zero downtime.
+* **Intelligent Resume Optimization:** Uses advanced NLP to identify skill gaps and provide actionable feedback to tailor resumes for specific job descriptions.
+* **Automated Skill Matching:** Compares candidate profiles against job requirements to assess role compatibility instantly.
 
 ---
 
@@ -75,10 +77,11 @@ To run TrackMind on your local machine:
 4.  Create `.env`:
     ```env
     PORT=5000
-    MONGO_URI=mongodb://localhost:27017/trackmind_db # Or your MongoDB Atlas URI
-    JWT_SECRET=your_strong_secret_key # Use a strong, random string
-    # GOOGLE_CLIENT_ID=... (if applicable)
-    # GOOGLE_CLIENT_SECRET=... (if applicable)
+    MONGO_URI=mongodb://localhost:27017/trackmind_db
+    JWT_SECRET=your_strong_secret_key
+    GOOGLE_API_KEY=your_gemini_key
+    GROQ_API_KEY=your_groq_key
+    SARVAM_API_KEY=your_sarvam_key
     ```
 5.  Start: `npm run dev`
 

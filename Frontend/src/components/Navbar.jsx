@@ -1,318 +1,207 @@
-import React, { useState } from "react";
-import Logo from "../assets/Logo.png"; 
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
-  FaBars,
-  FaTimes,
-  FaChevronDown,
-  FaLaptopCode,
-  FaFileAlt,
-  FaHome,
-  FaChartBar,
-  FaUser,
-  FaSignInAlt,
-  FaUserPlus,
-  FaSignOutAlt,
-} from "react-icons/fa"; 
+  HiMenuAlt3,
+  HiX,
+  HiChevronDown,
+  HiOutlineDocumentSearch,
+  HiOutlineViewGrid,
+  HiOutlineUser,
+  HiOutlineLogout,
+  HiOutlineLogin,
+  HiOutlineUserAdd,
+  HiOutlineHome,
+  HiOutlineSparkles,
+  HiOutlineMicrophone
+} from "react-icons/hi";
 
 const Navbar = () => {
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); 
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  
   const closeMenus = () => {
     setIsMobileMenuOpen(false);
     setIsFeaturesOpen(false);
   };
 
+  const NavLink = ({ to, children, icon: Icon }) => {
+    const isActive = location.pathname === to;
+    return (
+      <Link
+        to={to}
+        onClick={closeMenus}
+        className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
+          isActive 
+            ? "bg-sky-500/10 text-sky-500 font-bold" 
+            : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+        }`}
+      >
+        {Icon && <Icon className="w-5 h-5" />}
+        <span>{children}</span>
+      </Link>
+    );
+  };
+
   return (
-    <nav className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-gray-100">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
-        
-        <Link to={user ? "/" : "/"} className="flex items-center" onClick={closeMenus}>
-          <img src={Logo} alt="TrackMind Logo" className="w-28 md:w-36 lg:w-40 h-auto" />
-          <span className="sr-only">TrackMind Home</span> 
-        </Link>
+    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+      isScrolled ? "py-3" : "py-6"
+    }`}>
+      <div className="container mx-auto px-4 md:px-6">
+        <div className={`glass flex items-center justify-between px-6 py-3 transition-all duration-500 ${
+          isScrolled ? "rounded-2xl bg-white/80" : "rounded-3xl bg-transparent border-transparent shadow-none"
+        }`}>
+          
+          <Link to="/" className="flex items-center gap-3 group" onClick={closeMenus}>
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 shadow-lg shadow-sky-500/30 overflow-hidden transform transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
+              <HiOutlineSparkles className="w-6 h-6 text-white absolute z-10" />
+              <div className="absolute inset-0 bg-white/20 blur-md rounded-full group-hover:scale-150 transition-transform duration-500" />
+            </div>
+            <span className="text-2xl font-black tracking-tighter text-slate-900">
+              Track<span className="text-sky-500">Mind</span>
+            </span>
+          </Link>
 
-        
-        <ul className="hidden md:flex items-center space-x-8 lg:space-x-12 text-base font-medium text-gray-700">
-          {user ? (
-            <>
-              <li>
-                <Link
-                  to="/applications"
-                  className="hover:text-blue-600 transition duration-200"
-                >
-                  Dashboard
-                </Link>
-              </li>
-              <li className="relative">
-                <button
-                  onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
-                  className="flex items-center gap-1 hover:text-blue-600 transition duration-200 focus:outline-none"
-                  aria-expanded={isFeaturesOpen}
-                  aria-haspopup="true"
-                >
-                  All Features
-                  <FaChevronDown
-                    className={`w-3 h-3 transition-transform duration-200 ${
-                      isFeaturesOpen ? "rotate-180" : ""
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-2">
+            {user ? (
+              <>
+                <NavLink to="/applications" icon={HiOutlineViewGrid}>Dashboard</NavLink>
+                
+                <div className="relative group">
+                  <button
+                    onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
+                      isFeaturesOpen ? "bg-slate-100 text-slate-900 font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     }`}
-                  />
-                </button>
-                {isFeaturesOpen && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-white border border-gray-200 rounded-lg shadow-xl w-56 py-2 z-50 transform origin-top animate-fade-in">
-                    <Link
-                      to="/ai-resume-analyzer"
-                      className="flex items-center gap-2 px-4 py-3 text-gray-800 hover:bg-gray-50 transition duration-150"
-                      onClick={() => setIsFeaturesOpen(false)}
-                    >
-                      <FaFileAlt className="text-blue-500" /> AI Resume Analyzer
-                    </Link>
-                    <Link
-                      to="/applications"
-                      className="flex items-center gap-2 px-4 py-3 text-gray-800 hover:bg-gray-50 transition duration-150"
-                      onClick={() => setIsFeaturesOpen(false)}
-                    >
-                      <FaLaptopCode className="text-green-500" /> Application Tracker
-                    </Link>
-                  </div>
-                )}
-              </li>
-              <li>
-                <Link
-                  to="/profile"
-                  className="hover:text-blue-600 transition duration-200"
-                >
-                  Profile
-                </Link>
-              </li>
-            </>
-          ) : (
-            <>
-              <li>
-                <Link to="/" className="hover:text-blue-600 transition duration-200">
-                  Home
-                </Link>
-              </li>
-              <li className="relative">
+                  >
+                    <HiOutlineDocumentSearch className="w-5 h-5" />
+                    <span>AI Features</span>
+                    <HiChevronDown className={`w-4 h-4 transition-transform duration-300 ${isFeaturesOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  
+                  {isFeaturesOpen && (
+                    <div className="absolute top-full right-0 mt-3 w-56 glass animate-fade-in p-2 overflow-hidden border border-slate-200">
+                      <Link
+                        to="/ai-resume-analyzer"
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-sky-50 transition-all font-medium"
+                        onClick={() => setIsFeaturesOpen(false)}
+                      >
+                        <HiOutlineDocumentSearch className="w-5 h-5 text-sky-500" />
+                        <span>Resume Analyzer</span>
+                      </Link>
+                      <Link
+                        to="/mock-interview"
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-sky-50 transition-all font-medium"
+                        onClick={() => setIsFeaturesOpen(false)}
+                      >
+                        <HiOutlineMicrophone className="w-5 h-5 text-amber-500" />
+                        <span>Mock Interview</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                <NavLink to="/profile" icon={HiOutlineUser}>Profile</NavLink>
+                
+                <div className="h-6 w-[1px] bg-slate-200 mx-2" />
+                
                 <button
-                  onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
-                  className="flex items-center gap-1 hover:text-blue-600 transition duration-200 focus:outline-none"
-                  aria-expanded={isFeaturesOpen}
-                  aria-haspopup="true"
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-6 py-2 rounded-full bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all duration-300 font-bold shadow-sm"
                 >
-                  Features
-                  <FaChevronDown
-                    className={`w-3 h-3 transition-transform duration-200 ${
-                      isFeaturesOpen ? "rotate-180" : ""
-                    }`}
-                  />
+                  <HiOutlineLogout className="w-5 h-5" />
+                  <span>Logout</span>
                 </button>
-                {isFeaturesOpen && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-white border border-gray-200 rounded-lg shadow-xl w-56 py-2 z-50 transform origin-top animate-fade-in">
-                    
-                    <p className="flex items-center gap-2 px-4 py-3 text-gray-800 hover:bg-gray-50 transition duration-150 cursor-not-allowed opacity-75">
-                      <FaFileAlt className="text-blue-500" /> AI Resume Analyzer
-                    </p>
-                    <p className="flex items-center gap-2 px-4 py-3 text-gray-800 hover:bg-gray-50 transition duration-150 cursor-not-allowed opacity-75">
-                      <FaLaptopCode className="text-green-500" /> Application Tracker
-                    </p>
-                  </div>
-                )}
-              </li>
-            </>
-          )}
-        </ul>
-
-        
-        <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
-          {user ? (
-            <button
-              className="px-6 py-2 bg-red-500 text-white rounded-full text-sm font-semibold hover:bg-red-600 transition duration-200 shadow-md hover:shadow-lg hover:cursor-pointer"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          ) : (
-            <>
-              <button
-                className="text-gray-700 hover:text-blue-600 transition duration-200 font-medium"
-                onClick={() => {
-                  navigate("/login");
-                }}
-              >
-                Login
-              </button>
-              <button
-                className="px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-semibold hover:bg-blue-700 transition duration-200 shadow-md hover:shadow-lg"
-                onClick={() => {
-                  navigate("/signup");
-                }}
-              >
-                Sign Up
-              </button>
-            </>
-          )}
-        </div>
-
-        
-        <div className="md:hidden">
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="focus:outline-none">
-            {isMobileMenuOpen ? (
-              <FaTimes className="w-7 h-7 text-gray-700" />
+              </>
             ) : (
-              <FaBars className="w-7 h-7 text-gray-700" />
+              <>
+                <NavLink to="/" icon={HiOutlineHome}>Home</NavLink>
+                <div className="h-6 w-[1px] bg-slate-200 mx-4" />
+                <button
+                  onClick={() => navigate("/login")}
+                  className="px-6 py-2 text-slate-600 hover:text-slate-900 transition-all font-bold"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="btn-primary flex items-center gap-2 py-2"
+                >
+                  <HiOutlineUserAdd className="w-5 h-5" />
+                  <span>Get Started</span>
+                </button>
+              </>
             )}
-            <span className="sr-only">Toggle mobile menu</span>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+            className="md:hidden p-2 text-slate-600 hover:text-slate-900 transition-all bg-slate-100 rounded-xl"
+          >
+            {isMobileMenuOpen ? <HiX className="w-6 h-6" /> : <HiMenuAlt3 className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      
+      {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-lg py-4 px-4 z-40 animate-slide-down">
-          <ul className="flex flex-col gap-4 text-gray-800 font-medium">
-            {user ? (
-              <>
-                <li>
-                  <Link
-                    to="/applications"
-                    onClick={closeMenus}
-                    className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
-                  >
-                    <FaChartBar className="text-blue-500" /> Dashboard
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/profile"
-                    onClick={closeMenus}
-                    className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
-                  >
-                    <FaUser className="text-purple-500" /> Profile
-                  </Link>
-                </li>
-                
-                <li>
-                  <button
-                    onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
-                    className="w-full text-left flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
-                  >
-                    <FaChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${
-                        isFeaturesOpen ? "rotate-180" : ""
-                      }`}
-                    />{" "}
-                    Features
-                  </button>
-                  {isFeaturesOpen && (
-                    <div className="ml-6 mt-2 flex flex-col gap-2 border-l border-gray-200 pl-4 animate-fade-in">
-                      <Link
-                        to="/ai-resume-analyzer"
-                        onClick={closeMenus}
-                        className="flex items-center gap-2 py-2 text-gray-700 hover:text-blue-600 transition duration-150"
-                      >
-                        <FaFileAlt className="text-blue-500" /> AI Resume Analyzer
-                      </Link>
-                      <Link
-                        to="/dashboard"
-                        onClick={closeMenus}
-                        className="flex items-center gap-2 py-2 text-gray-700 hover:text-green-600 transition duration-150"
-                      >
-                        <FaLaptopCode className="text-green-500" /> Application Tracker
-                      </Link>
-                    </div>
-                  )}
-                </li>
-
-                <li className="border-t border-gray-100 pt-4 mt-4">
-                  <button
-                    className="w-full flex items-center justify-center gap-2 bg-red-500 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-red-600 transition duration-200 shadow-md"
-                    onClick={() => {
-                      handleLogout();
-                      closeMenus();
-                    }}
-                  >
-                    <FaSignOutAlt /> Logout
-                  </button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <Link
-                    to="/"
-                    onClick={closeMenus}
-                    className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
-                  >
-                    <FaHome className="text-blue-500" /> Home
-                  </Link>
-                </li>
-                
-                <li>
-                  <button
-                    onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
-                    className="w-full text-left flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition duration-150"
-                  >
-                    <FaChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${
-                        isFeaturesOpen ? "rotate-180" : ""
-                      }`}
-                    />{" "}
-                    Features
-                  </button>
-                  {isFeaturesOpen && (
-                    <div className="ml-6 mt-2 flex flex-col gap-2 border-l border-gray-200 pl-4 animate-fade-in">
-                      <p className="flex items-center gap-2 py-2 text-gray-700 opacity-75 cursor-not-allowed">
-                        <FaFileAlt className="text-blue-500" /> AI Resume Analyzer
-                      </p>
-                      <p className="flex items-center gap-2 py-2 text-gray-700 opacity-75 cursor-not-allowed">
-                        <FaLaptopCode className="text-green-500" /> Application Tracker
-                      </p>
-                    </div>
-                  )}
-                </li>
-
-                <div className="border-t border-gray-100 pt-4 mt-4 flex flex-col gap-3">
-                  <li>
-                    <button
-                      className="w-full flex items-center justify-center gap-2 text-gray-700 px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition duration-200"
-                      onClick={() => {
-                        navigate("/login");
-                        closeMenus();
-                      }}
-                    >
-                      <FaSignInAlt /> Login
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition duration-200 shadow-md"
-                      onClick={() => {
-                        navigate("/signup");
-                        closeMenus();
-                      }}
-                    >
-                      <FaUserPlus /> Sign Up
-                    </button>
-                  </li>
-                </div>
-              </>
-            )}
-          </ul>
+        <div className="md:hidden absolute top-full left-4 right-4 mt-2 glass border border-slate-200 p-4 animate-fade-in flex flex-col gap-2 shadow-xl shadow-slate-200/50">
+          {user ? (
+            <>
+              <NavLink to="/applications" icon={HiOutlineViewGrid}>Dashboard</NavLink>
+              <NavLink to="/ai-resume-analyzer" icon={HiOutlineDocumentSearch}>Resume Analyzer</NavLink>
+              <NavLink to="/mock-interview" icon={HiOutlineMicrophone}>Mock Interview</NavLink>
+              <NavLink to="/profile" icon={HiOutlineUser}>Profile</NavLink>
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center gap-3 w-full px-4 py-3 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white font-bold mt-4 transition-all"
+              >
+                <HiOutlineLogout className="w-5 h-5" />
+                <span>Logout</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/" icon={HiOutlineHome}>Home</NavLink>
+              <div className="grid grid-cols-2 gap-3 mt-4">
+                <button
+                  onClick={() => { navigate("/login"); closeMenus(); }}
+                  className="btn-secondary py-3 text-sm"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => { navigate("/signup"); closeMenus(); }}
+                  className="btn-primary py-3 text-sm"
+                >
+                  Sign Up
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
     </nav>
   );
 };
 
-export default Navbar;
+export default Navbar;

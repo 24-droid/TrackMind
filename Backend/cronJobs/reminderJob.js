@@ -22,7 +22,7 @@ const startReminderJob=()=>{
                 const upcomingApplications = await Application.find({
                     userId: user._id,
                     deadline: { $gte: today, $lte: reminderCutoffDate }, 
-                    status: { $nin: ['Offer', 'Rejected'] } 
+                    status: { $nin: ['Offer', 'Accepted', 'Rejected', 'Withdrawn'] } 
                 });
                 if (upcomingApplications.length > 0) {
                     

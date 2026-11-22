@@ -1,283 +1,285 @@
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
-import FormInput from "../components/FormInput";
 import Navbar from "../components/Navbar";
-export default function Profile(){
-  const {user,login,logout}=useAuth();
-  const [profileData,setProfileData]=useState({
-    fullName:'',
-    email:''
+import { HiOutlineUser, HiOutlineMail, HiOutlineLockClosed, HiOutlineBell, HiOutlineSave } from 'react-icons/hi';
+
+export default function Profile() {
+  const { user, login, logout } = useAuth();
+  const [profileData, setProfileData] = useState({
+    fullName: '',
+    email: ''
   });
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmNewPassword: '',
   });
-  const[profileErrors,setProfileErrors]=useState({});
-  const[passwordErrors,setPasswordErrors]=useState({});
-  const[profileLoading,setProfileLoading]=useState(false);
-  const[passwordLoading,setPasswordLoading]=useState(false);
-  const[notificationsEnabled,setNotificationsEnabled]=useState(true);
-  const[reminderDays,setReminderDays]=useState(3);
-  const[notificationLoading,setNotificationLoading]=useState(false);
-  const[notificationMessage,setNotificationMessage]=useState('');
+  const [profileErrors, setProfileErrors] = useState({});
+  const [passwordErrors, setPasswordErrors] = useState({});
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [reminderDays, setReminderDays] = useState(3);
+  const [notificationLoading, setNotificationLoading] = useState(false);
 
-  useEffect(()=>{
-    const fetchUserProfileAndNotifications=async()=>{
-      if(!user) return;
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
       setProfileLoading(true);
       try {
-        const res=await axios.get('/users/profile');
+        const res = await axios.get('/users/profile');
         setProfileData({
-          fullName:res.data.fullName,
-          email:res.data.email,
-        })
+          fullName: res.data.fullName,
+          email: res.data.email,
+        });
         setNotificationsEnabled(res.data.emailNotificationsEnabled);
         setReminderDays(res.data.reminderDaysBefore);
       } catch (error) {
-        console.error("Error fetching user profile:",error);
-        toast.error(error.response?.data?.message || "Failed to load profile data.");
-        if (error.response && error.response.status === 401) {
-          logout(); 
-        }
-      }
-      finally{
+        console.error("Error fetching profile:", error);
+        if (error.response?.status === 401) logout();
+      } finally {
         setProfileLoading(false);
       }
-    }
-    fetchUserProfileAndNotifications();
-  },[user,logout]);
-  const handleProfileChange=(e)=>{
-    setProfileData({...profileData,[e.target.id]:e.target.value});
-    setProfileErrors({...profileErrors,[e.target.id]:''});
-  }
-  const handlePasswordChange=(e)=>{
-    setPasswordData({...passwordData,[e.target.id]:e.target.value});
-    setPasswordErrors({...passwordErrors,[e.target.id]:''});
+    };
+    fetchUserProfile();
+  }, [user, logout]);
 
-  }
-  const validateProfile=()=>{
-    const err={};
-    if (!profileData.fullName) err.fullName = "Full name is required";
-    if (!profileData.email || !/\S+@\S+\.\S+/.test(profileData.email)) err.email = "Enter a valid email";
+  const handleProfileChange = (e) => {
+    setProfileData({ ...profileData, [e.target.id]: e.target.value });
+    setProfileErrors({ ...profileErrors, [e.target.id]: '' });
+  };
+
+  const handlePasswordChange = (e) => {
+    setPasswordData({ ...passwordData, [e.target.id]: e.target.value });
+    setPasswordErrors({ ...passwordErrors, [e.target.id]: '' });
+  };
+
+  const validateProfile = () => {
+    const err = {};
+    if (!profileData.fullName) err.fullName = "Required";
+    if (!profileData.email || !/\S+@\S+\.\S+/.test(profileData.email)) err.email = "Invalid email";
     setProfileErrors(err);
     return Object.keys(err).length === 0;
-  }
+  };
 
-  const validatePassword=()=>{
+  const validatePassword = () => {
     const err = {};
-    if (!passwordData.currentPassword) err.currentPassword = "Current password is required";
-    if (!passwordData.newPassword || passwordData.newPassword.length < 6) err.newPassword = "New password must be at least 6 characters";
-    if (passwordData.newPassword !== passwordData.confirmNewPassword) err.confirmNewPassword = "New passwords do not match";
+    if (!passwordData.currentPassword) err.currentPassword = "Required";
+    if (passwordData.newPassword.length < 8) err.newPassword = "Min 8 chars";
+    if (passwordData.newPassword !== passwordData.confirmNewPassword) err.confirmNewPassword = "No match";
     setPasswordErrors(err);
     return Object.keys(err).length === 0;
-  }
-  const handleProfileSubmit=async(e)=>{
-    e.preventDefault();
-    if(!validateProfile()) return;
-    setPasswordLoading(true);
-    try {
-      const res=await axios.put('/users/profile',profileData);
-      login(res.data,res.data.token);
-      toast.success("Profile updated Successfully");
+  };
 
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateProfile()) return;
+    setProfileLoading(true);
+    try {
+      const res = await axios.put('/users/profile', profileData);
+      login(res.data, res.data.token);
+      toast.success("Identity updated successfully.");
     } catch (error) {
-      console.error("Error updating profile",error);
-      toast.error(error.response?.data?.message || "Failed to update profile.");
-      if (error.response && error.response.status === 401) {
-        logout();
-      }
-    }
-    finally{
+      toast.error("Profile update failed.");
+      if (error.response?.status === 401) logout();
+    } finally {
       setProfileLoading(false);
     }
-  }
-  const handlePasswordSubmit=async(e)=>{
+  };
+
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    if(!validatePassword()) return;
+    if (!validatePassword()) return;
     setPasswordLoading(true);
     try {
-      const res=await axios.put('/users/profile',{
-        password:passwordData.newPassword,
-        currentPassword:passwordData.currentPassword
-      })
-      login(res.data,res.data.token);
-      toast.success("Password updated successfully!");
-      setPasswordData({currentPassword:'',newPassword:'',confirmNewPassword:''});
+      await axios.put('/users/profile', {
+        password: passwordData.newPassword,
+        currentPassword: passwordData.currentPassword
+      });
+      toast.success("Security protocols updated.");
+      setPasswordData({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
     } catch (error) {
-      console.error("Error updating password:",error);
-      toast.error(error.response?.data?.message || "Failed to update password.");
-      if (error.response && error.response.status === 401) {
-        logout();
-      }
-    }
-    finally{
+      toast.error("Password update rejected.");
+      if (error.response?.status === 401) logout();
+    } finally {
       setPasswordLoading(false);
     }
-  }
-  const handleNotificationSubmit=async(e)=>{
+  };
+
+  const handleNotificationSubmit = async (e) => {
     e.preventDefault();
     setNotificationLoading(true);
-    setNotificationMessage('');
     try {
-      await axios.put('/users/me/notifications',{
-        emailNotificationsEnabled:notificationsEnabled,
-        reminderDaysBefore:reminderDays,
+      await axios.put('/users/me/notifications', {
+        emailNotificationsEnabled: notificationsEnabled,
+        reminderDaysBefore: reminderDays,
       });
-      setNotificationMessage('Notification preferences updated successfully!');
-      toast.success("Notification preferences updated successfully!");
+      toast.success("Alert preferences synced.");
     } catch (error) {
-      console.error("Error updating notifications preferences:",error);
-      setNotificationMessage(`Failed to update preferences:${error.response?.data?.message||'Server error'}`);
-      toast.error(error.response?.data?.message || "Failed to update notification preferences.");
-      if(error.response && error.response.status===401)
-        {
-          logout();
-        }
-    }
-    finally{
+      toast.error("Failed to update alerts.");
+      if (error.response?.status === 401) logout();
+    } finally {
       setNotificationLoading(false);
     }
+  };
+
+  if (profileLoading && !profileData.fullName) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin"></div>
+      </div>
+    );
   }
-  if (profileLoading && !profileData.fullName) { 
-    return <div className="flex justify-center items-center h-screen text-lg">Loading profile...</div>;
-  }
+
   return (
-    <>
-    <Navbar/>
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Your Profile</h1>
-
+    <div className="min-h-screen bg-slate-50 text-slate-800">
+      <Navbar />
       
-      <div className="bg-white p-8 rounded-lg shadow-xl mb-8">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3">Update Profile Information</h2>
-        <form onSubmit={handleProfileSubmit} className="space-y-6">
-          <FormInput
-            id="fullName"
-            label="Full Name"
-            type="text"
-            value={profileData.fullName}
-            onChange={handleProfileChange}
-            error={profileErrors.fullName}
-            placeholder="Your Full Name"
-          />
-          <FormInput
-            id="email"
-            label="Email Address"
-            type="email"
-            value={profileData.email}
-            onChange={handleProfileChange}
-            error={profileErrors.email}
-            placeholder="your@email.com"
-          />
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
-              disabled={profileLoading}
-            >
-              {profileLoading ? 'Updating Profile...' : 'Update Profile'}
-            </button>
-          </div>
-        </form>
-      </div>
+      {/* Background decoration */}
+      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-sky-500/5 rounded-full blur-[120px] -z-10" />
+      <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] -z-10" />
 
-      
-      <div className="bg-white p-8 rounded-lg shadow-xl">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3">Change Password</h2>
-        <form onSubmit={handlePasswordSubmit} className="space-y-6">
-          <FormInput
-            id="currentPassword"
-            label="Current Password"
-            type="password"
-            value={passwordData.currentPassword}
-            onChange={handlePasswordChange}
-            error={passwordErrors.currentPassword}
-            placeholder="••••••••"
-          />
-          <FormInput
-            id="newPassword"
-            label="New Password"
-            type="password"
-            value={passwordData.newPassword}
-            onChange={handlePasswordChange}
-            error={passwordErrors.newPassword}
-            placeholder="••••••••"
-          />
-          <FormInput
-            id="confirmNewPassword"
-            label="Confirm New Password"
-            type="password"
-            value={passwordData.confirmNewPassword}
-            onChange={handlePasswordChange}
-            error={passwordErrors.confirmNewPassword}
-            placeholder="••••••••"
-          />
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="bg-purple-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-purple-700 transition disabled:opacity-50"
-              disabled={passwordLoading}
-            >
-              {passwordLoading ? 'Updating Password...' : 'Update Password'}
-            </button>
-          </div>
-        </form>
-      </div>
-      <div className="bg-white p-8 rounded-lg shadow-xl">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3">Notification Settings</h2>
-        <form onSubmit={handleNotificationSubmit} className="space-y-6">
-          {notificationMessage && (
-            <p className={`text-center ${notificationMessage.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
-              {notificationMessage}
-            </p>
-          )}
+      <main className="container mx-auto px-4 pt-32 pb-20 max-w-4xl">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2 tracking-tight">Identity Matrix</h1>
+          <p className="text-slate-600">Manage your profile credentials and security protocols.</p>
+        </div>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="emailNotificationsEnabled"
-              checked={notificationsEnabled}
-              onChange={(e) => setNotificationsEnabled(e.target.checked)}
-              className="form-checkbox h-5 w-5 text-blue-600 rounded"
-            />
-            <label htmlFor="emailNotificationsEnabled" className="ml-2 text-gray-700 text-lg">
-              Enable Email Reminders
-            </label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          {/* Identity Section */}
+          <div className="glass p-8 rounded-[2.5rem] border-sky-500/20">
+            <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <HiOutlineUser className="text-sky-400" /> Core Profile
+            </h2>
+            <form onSubmit={handleProfileSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-600 uppercase ml-1">Full Name</label>
+                <input
+                  id="fullName"
+                  type="text"
+                  value={profileData.fullName}
+                  onChange={handleProfileChange}
+                  className={`w-full px-4 py-3 bg-white/70 border ${profileErrors.fullName ? 'border-rose-500' : 'border-slate-200'} rounded-2xl focus:outline-none focus:border-sky-500 text-slate-900 transition-all`}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-600 uppercase ml-1">Email Terminal</label>
+                <input
+                  id="email"
+                  type="email"
+                  value={profileData.email}
+                  onChange={handleProfileChange}
+                  className={`w-full px-4 py-3 bg-white/70 border ${profileErrors.email ? 'border-rose-500' : 'border-slate-200'} rounded-2xl focus:outline-none focus:border-sky-500 text-slate-900 transition-all`}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={profileLoading}
+                className="w-full btn-primary py-3 text-sm flex items-center justify-center gap-2 mt-4"
+              >
+                {profileLoading ? 'Syncing...' : 'Confirm Identity'}
+              </button>
+            </form>
           </div>
 
-          <div>
-            <label htmlFor="reminderDays" className="block text-gray-700 text-lg font-medium mb-2">
-              Remind me
-            </label>
-            <select
-              id="reminderDays"
-              value={reminderDays}
-              onChange={(e) => setReminderDays(Number(e.target.value))}
-              disabled={!notificationsEnabled || notificationLoading} // Disable if notifications are off or saving
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-            >
-              <option value={1}>1 day before deadline</option>
-              <option value={3}>3 days before deadline</option>
-              <option value={7}>7 days before deadline</option>
-              <option value={14}>14 days before deadline</option>
-            </select>
+          {/* Security Section */}
+          <div className="glass p-8 rounded-[2.5rem] border-indigo-500/20">
+            <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <HiOutlineLockClosed className="text-indigo-400" /> Security
+            </h2>
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <input
+                id="currentPassword"
+                type="password"
+                placeholder="Current Access Key"
+                value={passwordData.currentPassword}
+                onChange={handlePasswordChange}
+                className={`w-full px-4 py-3 bg-white/70 border ${passwordErrors.currentPassword ? 'border-rose-500' : 'border-slate-200'} rounded-2xl focus:outline-none focus:border-indigo-500 text-slate-900 transition-all`}
+              />
+              <input
+                id="newPassword"
+                type="password"
+                placeholder="New Access Key"
+                value={passwordData.newPassword}
+                onChange={handlePasswordChange}
+                className={`w-full px-4 py-3 bg-white/70 border ${passwordErrors.newPassword ? 'border-rose-500' : 'border-slate-200'} rounded-2xl focus:outline-none focus:border-indigo-500 text-slate-900 transition-all`}
+              />
+              <input
+                id="confirmNewPassword"
+                type="password"
+                placeholder="Confirm Key"
+                value={passwordData.confirmNewPassword}
+                onChange={handlePasswordChange}
+                className={`w-full px-4 py-3 bg-white/70 border ${passwordErrors.confirmNewPassword ? 'border-rose-500' : 'border-slate-200'} rounded-2xl focus:outline-none focus:border-indigo-500 text-slate-900 transition-all`}
+              />
+              <button
+                type="submit"
+                disabled={passwordLoading}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-slate-900 py-3 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 mt-4"
+              >
+                {passwordLoading ? 'Rotating...' : 'Rotate Key'}
+              </button>
+            </form>
           </div>
 
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="bg-green-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-green-700 transition disabled:opacity-50"
-              disabled={notificationLoading}
-            >
-              {notificationLoading ? 'Saving Settings...' : 'Save Notification Settings'}
-            </button>
+          {/* Notifications Section */}
+          <div className="md:col-span-2 glass p-8 rounded-[2.5rem] border-emerald-500/20">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <HiOutlineBell className="text-emerald-400" /> Neural Alerts
+                </h2>
+                <p className="text-slate-600 text-sm mt-1">Configure automated deadline synchronization.</p>
+              </div>
+              <div className="flex items-center gap-3 bg-white/70 p-2 rounded-2xl border border-slate-200">
+                <span className={`text-xs font-black uppercase tracking-widest ${notificationsEnabled ? 'text-emerald-400' : 'text-slate-600'}`}>
+                  {notificationsEnabled ? 'Enabled' : 'Disabled'}
+                </span>
+                <button
+                  onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${notificationsEnabled ? 'bg-emerald-500' : 'bg-slate-700'}`}
+                >
+                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${notificationsEnabled ? 'left-7' : 'left-1'}`} />
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleNotificationSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+              <div className="space-y-4">
+                <label className="text-xs font-bold text-slate-600 uppercase ml-1">Deadline Buffer (Days)</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[1, 3, 7, 14].map((days) => (
+                    <button
+                      key={days}
+                      type="button"
+                      onClick={() => setReminderDays(days)}
+                      disabled={!notificationsEnabled}
+                      className={`py-3 rounded-xl font-bold transition-all border ${
+                        reminderDays === days 
+                          ? 'bg-emerald-500 border-emerald-400 text-slate-900 shadow-lg shadow-emerald-500/20' 
+                          : 'bg-white/70 border-slate-200 text-slate-600 hover:border-slate-300'
+                      } ${!notificationsEnabled ? 'opacity-30 cursor-not-allowed' : ''}`}
+                    >
+                      {days}d
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button
+                type="submit"
+                disabled={notificationLoading}
+                className="w-full bg-white border border-slate-200 text-slate-900 py-4 rounded-2xl font-bold hover:bg-slate-100 transition-all flex items-center justify-center gap-2"
+              >
+                <HiOutlineSave className="w-5 h-5 text-emerald-400" />
+                {notificationLoading ? 'Syncing...' : 'Save Preferences'}
+              </button>
+            </form>
           </div>
-        </form>
-      </div>
+        </div>
+      </main>
     </div>
-    </>
   );
-}
+}
